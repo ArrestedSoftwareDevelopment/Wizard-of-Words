@@ -197,6 +197,8 @@ Exit: every shipped frame hugs the board, and board rendering no longer lives in
 
 Exit: `main.gd` is a small screen/application coordinator, not a UI factory.
 
+Progress (2026-08-23): title, setup, game HUD, blank picker, and trade dialog are now signal-driven scenes. Shared styling and asset helpers live in `UiFactory`; rack rendering remains in the temporary match coordinator until the authoritative engine establishes its state/view contract.
+
 ### Phase 3 - Authoritative local engine
 
 - Introduce `MatchConfig`, `MatchState`, `MatchEngine`, commands, and events.
@@ -251,15 +253,15 @@ Critical invariants include conservation of tiles, one authoritative turn owner,
 
 ## Immediate next implementation slice
 
-Do Phase 0 and Phase 1 together as a narrow change:
+Begin Phase 3 with the state boundary, without changing visible behavior:
 
-1. Add asset and rules regression tests.
-2. Create `BoardShell`/`BoardView` scenes without changing match rules.
-3. Add frame inset metadata for each selected frame.
-4. Replace only the board construction portion of `_build_game_ui()`.
-5. Visually verify each frame at multiple window sizes.
+1. Introduce serializable `MatchConfig` and `MatchState` objects.
+2. Extract seeded tile-bag creation and conservation checks.
+3. Define command/event envelopes with protocol and schema versions.
+4. Move start-match, pass, and trade mutations into `MatchEngine` first.
+5. Keep the current controller as an adapter while tests migrate command by command.
 
-This resolves the visible border problem while beginning the refactor at a low-risk boundary. It deliberately postpones networking code until the match engine and serialization seams exist.
+This creates the authoritative seam needed by replay, AI, and remote play before any networking transport is introduced.
 
 ## Technical references
 

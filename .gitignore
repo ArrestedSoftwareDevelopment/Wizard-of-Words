@@ -19,3 +19,4 @@ crash-*.txt
 Thumbs.db
 .vscode/
 .idea/
+.serena/

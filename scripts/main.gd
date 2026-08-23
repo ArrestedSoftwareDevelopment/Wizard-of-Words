@@ -4,14 +4,17 @@
 extends Control
 
 const COLOR_BG := Color("241a38")
-const COLOR_PANEL := Color("33245c")
 const COLOR_GOLD := Color("e8b23a")
-const COLOR_TEXT := Color("f3ead7")
 const COLOR_TILE := Color("5a3fa0")
 const COLOR_TILE_SEL := Color("8a6fd0")
 const COLOR_TILE_PEND := Color("d9a13a")
 const CELL_SIZE := 44.0
 const BOARD_SHELL_SCENE := preload("res://scenes/components/board_shell.tscn")
+const TITLE_SCREEN_SCENE := preload("res://scenes/screens/title_screen.tscn")
+const SETUP_SCREEN_SCENE := preload("res://scenes/screens/setup_screen.tscn")
+const GAME_HUD_SCENE := preload("res://scenes/components/game_hud.tscn")
+const BLANK_PICKER_SCENE := preload("res://scenes/components/blank_picker.tscn")
+const TRADE_DIALOG_SCENE := preload("res://scenes/components/trade_dialog.tscn")
 
 var ruleset: WordRuleset
 var lexicon: Lexicon
@@ -55,8 +58,6 @@ var _reveal_font: FontFile = null
 var _reveal_font_tried := false
 var _tile_font: FontFile = null
 var _tile_font_tried := false
-var _display_font: FontFile = null
-var _display_font_tried := false
 var title_center: Control
 var ai_lexicon: Lexicon = null
 var ai_check: CheckButton
@@ -64,6 +65,10 @@ var setup_panel: PanelContainer
 var game_root: HBoxContainer
 var blank_popup: PopupPanel
 var blank_target := Vector2i(-1, -1)
+var title_screen: TitleScreen
+var setup_screen: SetupScreen
+var game_hud: GameHud
+var trade_dialog: TradeDialog
 
 
 func _ready() -> void:
@@ -87,93 +92,23 @@ func _load_tile_font() -> void:
 				return
 
 
-func _load_display_font() -> void:
-	_display_font_tried = true
-	for p in ["res://data/typefaces/Mage.ttf", "res://data/typefaces/Dumbledor-Regular.ttf"]:
-		if FileAccess.file_exists(p):
-			var f := FontFile.new()
-			if f.load_dynamic_font(p) == OK:
-				_display_font = f
-				return
-
-
 func _load_texture_any(path: String) -> Texture2D:
-	var tex: Variant = load(path)
-	if tex != null and tex is Texture2D:
-		return tex
-	if FileAccess.file_exists(path):
-		var img := Image.load_from_file(path)
-		if img != null:
-			return ImageTexture.create_from_image(img)
-	return null
+	return UiFactory.load_texture_any(path)
 
 
 func _build_title() -> void:
-	title_center = Control.new()
-	title_center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(title_center)
-
-	var art_path := "res://data/graphics/title screens/Title Screen 2.png"
-	if not FileAccess.file_exists(art_path):
-		art_path = "res://data/graphics/title screens/titlescreen1.png"
-	var has_art := FileAccess.file_exists(art_path)
-	if has_art:
-		var tex: Texture2D = _load_texture_any(art_path)
-		if tex != null:
-			var art := TextureRect.new()
-			art.texture = tex
-			art.set_anchors_preset(Control.PRESET_FULL_RECT)
-			art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			art.stretch_mode = TextureRect.STRETCH_SCALE
-			art.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			title_center.add_child(art)
-
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 18)
-	v.custom_minimum_size = Vector2(420, 0)
-	v.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	v.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	v.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	v.offset_bottom = -48
-	title_center.add_child(v)
-
-	if not has_art:
-		var t := Label.new()
-		t.text = "WIZARD OF WORDS"
-		t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		t.add_theme_font_size_override("font_size", 46)
-		t.add_theme_color_override("font_color", COLOR_GOLD)
-		if _display_font == null and not _display_font_tried:
-			_load_display_font()
-		if _display_font != null:
-			t.add_theme_font_override("font", _display_font)
-		v.add_child(t)
-		v.add_child(_make_caption("A duel of runes upon a living sigil"))
-
-	var quick := _make_button("Quick Play")
-	quick.custom_minimum_size = Vector2(280, 0)
-	quick.pressed.connect(_on_quick_play)
-	v.add_child(quick)
-
-	var create := _make_button("Create")
-	create.custom_minimum_size = Vector2(280, 0)
-	create.pressed.connect(_show_create)
-	v.add_child(create)
-
-	if not has_art:
-		var credit := _make_caption("Code sorcery by ox-alpha, an LLM of undisclosed origin")
-		credit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		v.add_child(credit)
+	title_screen = TITLE_SCREEN_SCENE.instantiate()
+	title_screen.quick_play_requested.connect(_on_quick_play)
+	title_screen.create_requested.connect(_show_create)
+	add_child(title_screen)
+	title_center = title_screen
 
 
 func _hide_game_and_setup() -> void:
 	if game_root != null:
 		game_root.queue_free()
 		game_root = null
-	setup_panel.visible = false
-	var holder := setup_panel.get_parent()
-	if holder is Control:
-		holder.visible = false
+	setup_screen.visible = false
 
 
 func _show_title() -> void:
@@ -183,10 +118,7 @@ func _show_title() -> void:
 
 func _show_create() -> void:
 	title_center.visible = false
-	var holder := setup_panel.get_parent()
-	if holder is Control:
-		holder.visible = true
-	setup_panel.visible = true
+	setup_screen.visible = true
 
 
 func _on_quick_play() -> void:
@@ -232,206 +164,42 @@ func _save_prefs(rs_name: String, grimoires: Array) -> void:
 	fa.close()
 
 
-func _list_files(dir_path: String, exts: Array) -> PackedStringArray:
-	var out := PackedStringArray()
-	var dir := DirAccess.open(dir_path)
-	if dir == null:
-		return out
-	dir.list_dir_begin()
-	var f := dir.get_next()
-	while f != "":
-		if not dir.current_is_dir():
-			for e in exts:
-				if f.get_extension().to_lower() == e:
-					out.append(f)
-					break
-		f = dir.get_next()
-	dir.list_dir_end()
-	out.sort()
-	return out
-
-
 func _build_setup() -> void:
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(center)
-	setup_panel = PanelContainer.new()
-	var style := StyleBoxFlat.new()
-	style.bg_color = COLOR_PANEL
-	style.corner_radius_top_left = 12
-	style.corner_radius_top_right = 12
-	style.corner_radius_bottom_left = 12
-	style.corner_radius_bottom_right = 12
-	style.content_margin_left = 30.0
-	style.content_margin_right = 30.0
-	style.content_margin_top = 24.0
-	style.content_margin_bottom = 24.0
-	setup_panel.add_theme_stylebox_override("panel", style)
-	center.add_child(setup_panel)
-
-	var vbox := VBoxContainer.new()
-	vbox.custom_minimum_size = Vector2(560, 0)
-	vbox.add_theme_constant_override("separation", 14)
-	setup_panel.add_child(vbox)
-
-	vbox.add_child(_make_title("WIZARD OF WORDS"))
-	vbox.add_child(_make_caption("Forge thy spell from runes and grimoires"))
-
-	vbox.add_child(_make_caption("Ruleset"))
-	var rs_row := HBoxContainer.new()
-	rs_row.add_theme_constant_override("separation", 10)
-	vbox.add_child(rs_row)
-	var rs_col := VBoxContainer.new()
-	rs_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	rs_row.add_child(rs_col)
-	ruleset_select = OptionButton.new()
-	for f in _list_files("res://data/rulesets", ["json"]):
-		ruleset_select.add_item(f)
-	ruleset_select.item_selected.connect(func(_i): _update_ruleset_preview())
-	rs_col.add_child(ruleset_select)
-	ruleset_preview = TextureRect.new()
-	ruleset_preview.custom_minimum_size = Vector2(96, 96)
-	ruleset_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	ruleset_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	ruleset_preview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	rs_row.add_child(ruleset_preview)
-	_update_ruleset_preview()
-
-	var cols := HBoxContainer.new()
-	cols.add_theme_constant_override("separation", 20)
-	vbox.add_child(cols)
-	var left_col := VBoxContainer.new()
-	left_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left_col.add_theme_constant_override("separation", 6)
-	cols.add_child(left_col)
-	var right_col := VBoxContainer.new()
-	right_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right_col.add_theme_constant_override("separation", 6)
-	cols.add_child(right_col)
-
-	left_col.add_child(_make_caption("Grimoires"))
-	right_col.add_child(_make_caption("Bonus Words"))
-	lexicon_checks.clear()
-	var meta := {}
-	var meta_path := "res://data/dictionaries/index.json"
-	if FileAccess.file_exists(meta_path):
-		var parsed = JSON.parse_string(FileAccess.get_file_as_string(meta_path))
-		if parsed is Dictionary:
-			meta = parsed
-	dict_meta = meta
-	for f in _list_files("res://data/dictionaries", ["txt", "json"]):
-		if f == "index.json" or f.begins_with("profanity_") or f.begins_with("two_letter_"):
-			continue
-		var cb := CheckBox.new()
-		cb.text = str(f.get_basename().replace("_", " ")).capitalize()
-		cb.set_meta("file", f)
-		var info: Dictionary = meta.get(f, {})
-		if info.is_empty():
-			info = meta.get(f.get_basename(), {})
-		cb.button_pressed = bool(info.get("default_checked", true))
-		if not info.is_empty():
-			cb.tooltip_text = str(info.get("title", "")) + "\n" + str(info.get("description", ""))
-		lexicon_checks.append(cb)
-		if info.has("bonus_points"):
-			right_col.add_child(cb)
-		else:
-			left_col.add_child(cb)
-
-	ai_check = CheckButton.new()
-	ai_check.text = "Face the Word Wizard (AI)"
-	ai_check.button_pressed = true
-	vbox.add_child(ai_check)
-
-	vbox.add_child(_make_caption("Wizard Difficulty"))
-	ai_difficulty_select = OptionButton.new()
-	for d in ["Apprentice", "Adept", "Archmage"]:
-		ai_difficulty_select.add_item(d)
-	ai_difficulty_select.selected = 1
-	vbox.add_child(ai_difficulty_select)
-
-	fog_check = CheckButton.new()
-	fog_check.text = "Fog of War"
-	fog_check.tooltip_text = "Bonus squares stay hidden until revealed near recently played tiles."
-	vbox.add_child(fog_check)
-
-	vbox.add_child(_make_caption("Tile Set"))
-	tile_select = OptionButton.new()
-	tile_select.add_item("From Ruleset")
-	for f in _list_files("res://data/graphics/raw tiles", ["png"]):
-		if f.begins_with("Single"):
-			tile_select.add_item(f)
-	vbox.add_child(tile_select)
-
-	vbox.add_child(_make_caption("Frame"))
-	frame_select = OptionButton.new()
-	frame_select.add_item("From Ruleset")
-	for f in _list_files("res://data/graphics/frames", ["png"]):
-		frame_select.add_item(f)
-	vbox.add_child(frame_select)
-
-	new_game_btn = _make_button("Begin the Duel")
-	new_game_btn.pressed.connect(_on_new_game)
-	vbox.add_child(new_game_btn)
-
-	var back := _make_button("Return to Title")
-	back.pressed.connect(_show_title)
-	vbox.add_child(back)
-
-	var credit := _make_caption("Code sorcery by ox-alpha, an LLM of undisclosed origin")
-	credit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(credit)
+	setup_screen = SETUP_SCREEN_SCENE.instantiate()
+	setup_screen.begin_requested.connect(_on_new_game)
+	setup_screen.back_requested.connect(_show_title)
+	add_child(setup_screen)
+	setup_panel = setup_screen.panel
+	ruleset_select = setup_screen.ruleset_select
+	ruleset_preview = setup_screen.ruleset_preview
+	lexicon_checks = setup_screen.lexicon_checks
+	ai_check = setup_screen.ai_check
+	ai_difficulty_select = setup_screen.ai_difficulty_select
+	fog_check = setup_screen.fog_check
+	tile_select = setup_screen.tile_select
+	frame_select = setup_screen.frame_select
+	new_game_btn = setup_screen.begin_button
+	dict_meta = setup_screen.dict_meta
 
 
 func _build_blank_picker() -> void:
-	blank_popup = PopupPanel.new()
-	blank_popup.title = "Choose a rune for thy blank"
+	var picker: BlankPicker = BLANK_PICKER_SCENE.instantiate()
+	blank_popup = picker
 	add_child(blank_popup)
-	var v := VBoxContainer.new()
-	blank_popup.add_child(v)
-	v.add_child(_make_caption("The blank takes which rune's power?"))
-	var grid := GridContainer.new()
-	grid.columns = 7
-	grid.add_theme_constant_override("h_separation", 4)
-	grid.add_theme_constant_override("v_separation", 4)
-	v.add_child(grid)
-	for i in range(26):
-		var ch := char(65 + i)
-		var b := Button.new()
-		b.text = ch
-		b.custom_minimum_size = Vector2(44, 44)
-		b.pressed.connect(_on_blank_chosen.bind(ch))
-		grid.add_child(b)
+	picker.rune_chosen.connect(_on_blank_chosen)
 
 
 func _update_ruleset_preview() -> void:
-	if ruleset_preview == null or ruleset_select.item_count == 0 or ruleset_select.selected < 0:
-		return
-	var path := "res://data/rulesets/" + ruleset_select.get_item_text(ruleset_select.selected)
-	var rs := WordRuleset.load_from(path)
-	if rs == null:
-		return
-	var n := rs.board_size
-	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
-	img.fill(Color("241a38"))
-	for y in range(n):
-		if y >= rs.layout.size():
-			continue
-		var row := String(rs.layout[y])
-		for x in range(min(row.length(), n)):
-			var prem: Dictionary = rs.legend.get(row[x], rs.legend["."])
-			img.set_pixel(x, y, prem["color"])
-	ruleset_preview.texture = ImageTexture.create_from_image(img)
-	if fog_check != null:
-		fog_check.button_pressed = rs.fog_of_war
+	if setup_screen != null:
+		setup_screen.update_ruleset_preview()
 
 
 func _build_game_ui() -> void:
 	game_root = HBoxContainer.new()
 	game_root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	game_root.add_theme_constant_override("separation", 20)
-	for c in get_children():
-		if c != game_root and not (c is ColorRect) and c != blank_popup:
-			c.visible = false
+	title_screen.visible = false
+	setup_screen.visible = false
 	add_child(game_root)
 
 	board_shell = BOARD_SHELL_SCENE.instantiate()
@@ -442,72 +210,23 @@ func _build_game_ui() -> void:
 	cell_buttons = board_view.cell_buttons
 	refresh_board()
 
-	var side := VBoxContainer.new()
-	side.custom_minimum_size = Vector2(400, 0)
-	side.add_theme_constant_override("separation", 10)
-	game_root.add_child(side)
-
-	var side_panel := PanelContainer.new()
-	var sp_style := StyleBoxFlat.new()
-	sp_style.bg_color = COLOR_PANEL
-	sp_style.set_content_margin_all(16.0)
-	sp_style.set_corner_radius_all(10)
-	side_panel.add_theme_stylebox_override("panel", sp_style)
-	side.add_child(side_panel)
-
-	var sv := VBoxContainer.new()
-	sv.add_theme_constant_override("separation", 10)
-	side_panel.add_child(sv)
-
-	sv.add_child(_make_title("WIZARD OF WORDS"))
-
-	turn_label = _make_body("")
-	turn_label.add_theme_color_override("font_color", COLOR_GOLD)
-	sv.add_child(turn_label)
-
-	score_label = _make_body("")
-	score_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	sv.add_child(score_label)
-
-	sv.add_child(HSeparator.new())
-	sv.add_child(_make_caption("Thy rack of runes"))
-
-	rack_box = HBoxContainer.new()
-	rack_box.add_theme_constant_override("separation", 6)
-	sv.add_child(rack_box)
-
-	var btn_row1 := HBoxContainer.new()
-	btn_row1.add_theme_constant_override("separation", 8)
-	play_btn = _make_button("Cast Spell")
-	play_btn.pressed.connect(_on_play)
-	btn_row1.add_child(play_btn)
-	recall_btn = _make_button("Recall")
-	recall_btn.pressed.connect(_on_recall)
-	btn_row1.add_child(recall_btn)
-	shuffle_btn = _make_button("Shuffle")
-	shuffle_btn.pressed.connect(_on_shuffle)
-	btn_row1.add_child(shuffle_btn)
-	sv.add_child(btn_row1)
-
-	var btn_row2 := HBoxContainer.new()
-	btn_row2.add_theme_constant_override("separation", 8)
-	pass_btn = _make_button("Pass Turn")
-	pass_btn.pressed.connect(_on_pass)
-	btn_row2.add_child(pass_btn)
-	trade_btn = _make_button("Trade")
-	trade_btn.pressed.connect(_open_trade)
-	btn_row2.add_child(trade_btn)
-	var menu_btn := _make_button("New Game")
-	menu_btn.pressed.connect(_back_to_setup)
-	btn_row2.add_child(menu_btn)
-	sv.add_child(btn_row2)
-
-	sv.add_child(HSeparator.new())
-	log_label = _make_body("The duel begins...")
-	log_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	log_label.custom_minimum_size = Vector2(0, 180)
-	log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	sv.add_child(log_label)
+	game_hud = GAME_HUD_SCENE.instantiate()
+	game_root.add_child(game_hud)
+	game_hud.cast_requested.connect(_on_play)
+	game_hud.recall_requested.connect(_on_recall)
+	game_hud.shuffle_requested.connect(_on_shuffle)
+	game_hud.pass_requested.connect(_on_pass)
+	game_hud.trade_requested.connect(_open_trade)
+	game_hud.new_game_requested.connect(_back_to_setup)
+	rack_box = game_hud.rack_box
+	turn_label = game_hud.turn_label
+	score_label = game_hud.score_label
+	log_label = game_hud.log_label
+	play_btn = game_hud.play_button
+	recall_btn = game_hud.recall_button
+	shuffle_btn = game_hud.shuffle_button
+	pass_btn = game_hud.pass_button
+	trade_btn = game_hud.trade_button
 
 
 func _apply_tile_look(b: Button, label: String, value: int, base: Color, letter_size := 22) -> void:
@@ -1131,49 +850,19 @@ func _open_trade() -> void:
 	if not pending.is_empty():
 		_on_recall()
 	_ensure_trade_popup()
-	trade_selection.clear()
-	for c in trade_box.get_children():
-		c.queue_free()
 	var rack: Array = players[current]["rack"]
-	for i in range(rack.size()):
-		var idx := i
-		var t: Dictionary = rack[i]
-		var b := Button.new()
-		b.custom_minimum_size = Vector2(44, 50)
-		b.toggle_mode = true
-		b.text = t["letter"] if t["letter"] != "" else "?"
-		b.toggled.connect(func(on):
-			if on:
-				trade_selection[idx] = true
-			else:
-				trade_selection.erase(idx))
-		trade_box.add_child(b)
+	trade_dialog.populate(rack, trade_selection)
 	trade_popup.popup_centered()
 
 
 func _ensure_trade_popup() -> void:
 	if trade_popup != null:
 		return
-	trade_popup = PopupPanel.new()
-	trade_popup.title = "Trade Runes"
+	trade_dialog = TRADE_DIALOG_SCENE.instantiate()
+	trade_popup = trade_dialog
 	add_child(trade_popup)
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 10)
-	v.custom_minimum_size = Vector2(320, 0)
-	trade_popup.add_child(v)
-	v.add_child(_make_caption("Choose runes to sacrifice to the bag"))
-	trade_box = HBoxContainer.new()
-	trade_box.add_theme_constant_override("separation", 6)
-	v.add_child(trade_box)
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	var ok := _make_button("Trade Them")
-	ok.pressed.connect(_confirm_trade)
-	row.add_child(ok)
-	var cancel := _make_button("Never Mind")
-	cancel.pressed.connect(func(): trade_popup.hide())
-	row.add_child(cancel)
-	v.add_child(row)
+	trade_box = trade_dialog.trade_box
+	trade_dialog.confirmed.connect(_confirm_trade)
 
 
 func _confirm_trade() -> void:
@@ -1245,50 +934,3 @@ func _end_game() -> void:
 
 func _back_to_setup() -> void:
 	_show_title()
-
-
-func _make_title(text: String) -> Label:
-	var l := Label.new()
-	l.text = text
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.add_theme_font_size_override("font_size", 26)
-	l.add_theme_color_override("font_color", COLOR_GOLD)
-	return l
-
-
-func _make_caption(text: String) -> Label:
-	var l := Label.new()
-	l.text = text
-	l.add_theme_color_override("font_color", Color("b9a8e0"))
-	l.add_theme_font_size_override("font_size", 14)
-	return l
-
-
-func _make_body(text: String) -> Label:
-	var l := Label.new()
-	l.text = text
-	l.add_theme_color_override("font_color", COLOR_TEXT)
-	l.add_theme_font_size_override("font_size", 16)
-	return l
-
-
-func _make_button(text: String) -> Button:
-	var b := Button.new()
-	b.text = text
-	b.focus_mode = Control.FOCUS_NONE
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color("4a3585")
-	sb.set_corner_radius_all(6)
-	sb.content_margin_left = 12.0
-	sb.content_margin_right = 12.0
-	sb.content_margin_top = 6.0
-	sb.content_margin_bottom = 6.0
-	b.add_theme_stylebox_override("normal", sb)
-	var hov: StyleBoxFlat = sb.duplicate()
-	hov.bg_color = Color("5d46a5")
-	b.add_theme_stylebox_override("hover", hov)
-	var prs: StyleBoxFlat = sb.duplicate()
-	prs.bg_color = Color("3a2a6b")
-	b.add_theme_stylebox_override("pressed", prs)
-	b.add_theme_color_override("font_color", COLOR_TEXT)
-	return b
