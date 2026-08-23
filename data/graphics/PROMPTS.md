@@ -46,8 +46,8 @@ Visual themes are reusable skins and do not define gameplay. Classic Grimoire an
 | Order | Theme | Asset ID | Backdrop status |
 | --- | --- | --- | --- |
 | 1 | Wizardry | `wizardry` | Accepted and downloaded (Arcane Codex v2-bright) |
-| 2 | Gothic Horror | `gothic_horror` | Next |
-| 3 | Pirate | `pirate` | Queued |
+| 2 | Gothic Horror | `gothic_horror` | Accepted and downloaded |
+| 3 | Pirate | `pirate` | Next |
 | 4 | Space Age | `space_age` | Queued |
 | 5 | Kitchen Witchery | `kitchen_witchery` | Queued |
 | 6 | Prairie Homestead | `prairie_homestead` | Queued |
@@ -74,6 +74,12 @@ Generated backdrops:
 ### Gothic Horror
 
 Elegant haunted Victorian library and crypt materials: charcoal stone, blackened carved oak, tarnished silver, dried crimson roses, smoky candlelight and cool moonlight. Frightening but refined; no gore, monsters, bodies, or faces.
+
+Generated backdrops:
+
+- `backgrounds/generated/gothic_horror/Gothic Horror Backdrop v1.png` - OpenArt history `EInqkIfCufr2QefwHhd1`, GPT Image 2 text-to-image, 2304x1296 PNG. Accepted.
+
+Final prompt summary: full-screen premium painterly game backdrop; elegant haunted Victorian library merging into crypt architecture; charcoal stone, carved black oak, tarnished silver, dried crimson roses, candles and moonlight; open midtone shadows; broad uncluttered center/lower center; decoration at edges; no board, tiles, UI, text, figures, monsters, or gore.
 
 ### Pirate
 
