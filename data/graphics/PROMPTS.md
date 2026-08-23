@@ -50,8 +50,8 @@ Visual themes are reusable skins and do not define gameplay. Classic Grimoire an
 | 3 | Pirate | `pirate` | Accepted and downloaded |
 | 4 | Space Age | `space_age` | Accepted and downloaded |
 | 5 | Kitchen Witchery | `kitchen_witchery` | Accepted and downloaded |
-| 6 | Prairie Homestead | `prairie_homestead` | Next |
-| 7 | Velvet & Leather | `velvet_leather` | Queued |
+| 6 | Prairie Homestead | `prairie_homestead` | Accepted and downloaded |
+| 7 | Velvet & Leather | `velvet_leather` | Next |
 
 Backdrop-wide constraints: 16:9 at 2K, bright enough to retain shadow detail, with a broad quiet center and lower-center area for the board and HUD. Decoration belongs at the edges and corners. Backdrops contain no board, grid, tiles, rack, UI, text, people, or logos.
 
@@ -115,6 +115,12 @@ Final prompt summary: full-screen premium painterly enchanted cottage kitchen; h
 ### Prairie Homestead
 
 1870s American frontier homestead materials: honeyed pine, hand-pieced quilt geometry, pressed prairie wildflowers, blackened iron stove hardware, amber oil-lamp glow, wheat gold and dusty blue. No people, text, logos, or recognizable television imagery.
+
+Generated backdrops:
+
+- `backgrounds/generated/prairie_homestead/Prairie Homestead Backdrop v1.png` - OpenArt history `TKv8RueCuEH30uToEcGI`, GPT Image 2 text-to-image, 2304x1296 PNG. Accepted.
+
+Final prompt summary: full-screen premium painterly 1870s frontier homestead; honeyed pine, iron cookstove, cream crockery, quilts, wildflowers, oil lamps and prairie windows; soft late-afternoon light; broad uncluttered pine center; no board, tiles, UI, text, figures, modern objects, brands, or recognizable copyrighted sets.
 
 ### Velvet & Leather
 
