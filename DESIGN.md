@@ -74,16 +74,19 @@ The signature departure from Scrabble/WWF:
 
 ### Theme production
 
-Current asset work should complete the three playable ruleset skins before adding more runtime choices:
+Rulesets and themes are independent. **Classic Grimoire** and **Spiral Sigil** remain gameplay configurations; any ruleset can use any visual theme.
 
-1. **Arcane Codex** - violet wizard study, parchment, antique gold, luminous cyan/magenta sigils.
-2. **Classic Grimoire** - carved stone, dark walnut, worn parchment, restrained heraldic details.
-3. **Spiral Sigil** - obsidian, subtle ember fractures, astronomical spirals, deep indigo void.
+The seven canonical visual themes are:
 
-Future theme proposals:
+1. **Wizardry** (`wizardry`) - violet wizard study, parchment, antique gold, luminous cyan/magenta sigils. The existing Arcane Codex artwork belongs here.
+2. **Gothic Horror** (`gothic_horror`) - haunted Victorian library and crypt materials, blackened oak, tarnished silver, dried crimson roses, moonlight and smoky candles. Eerie and elegant, without gore.
+3. **Pirate** (`pirate`) - weathered captain's cabin, nautical charts, dark teak, rope, brass instruments, salt-worn canvas and stormy blue light.
+4. **Space Age** (`space_age`) - optimistic retro-futurist starship, brushed alloy, midnight-blue windows, luminous instrument accents and restrained cosmic color.
+5. **Kitchen Witchery** (`kitchen_witchery`) - welcoming enchanted cottage kitchen, worn butcher block, copper cookware, herbs, apothecary jars and hearth glow. Existing kitchen tile art belongs here.
+6. **Prairie Homestead** (`prairie_homestead`) - 1870s American frontier warmth: honeyed pine, hand-pieced quilt geometry, pressed wildflowers, iron stove hardware, amber lamplight, wheat and dusty blue accents. Period-inspired rather than tied to specific copyrighted characters or scenes.
+7. **Velvet & Leather** (`velvet_leather`) - tasteful, consensual-adult BDSM-inspired luxury: black leather, oxblood velvet, brushed brass rings and buckles, quilted surfaces, candlelit shadows, elegant restraint. Non-explicit; no bodies, nudity, text, or sexual acts.
 
-- **Prairie Homestead** - 1870s American frontier warmth: honeyed pine, hand-pieced quilt geometry, pressed wildflowers, iron stove hardware, amber lamplight, wheat and dusty blue accents. Period-inspired rather than tied to specific copyrighted characters or scenes.
-- **Velvet & Leather** - tasteful, consensual-adult BDSM-inspired luxury: black leather, oxblood velvet, brushed brass rings and buckles, quilted surfaces, candlelit shadows, elegant restraint. Non-explicit; no bodies, nudity, text, or sexual acts.
+Backdrop production order is Wizardry, Gothic Horror, Pirate, Space Age, Kitchen Witchery, Prairie Homestead, then Velvet & Leather. Finish all seven backdrops before generating frames, tiles, racks, or premium ornaments so the overall visual range can be reviewed as one coherent set.
 
 Every production theme should eventually provide a backdrop, board frame, blank tile face, rack/shelf, palette, and optional premium-cell ornament set. Source prompts and generation records live in `data/graphics/PROMPTS.md`.
 

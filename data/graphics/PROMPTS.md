@@ -39,7 +39,21 @@ Ornate horizontal wooden shelf bracket carved with arcane runes, dark stained wo
 
 ---
 
-## Active theme packs
+## Canonical theme packs
+
+Visual themes are reusable skins and do not define gameplay. Classic Grimoire and Spiral Sigil are rulesets, so they are not separate asset packs.
+
+| Order | Theme | Asset ID | Backdrop status |
+| --- | --- | --- | --- |
+| 1 | Wizardry | `wizardry` | Accepted and downloaded (Arcane Codex v2-bright) |
+| 2 | Gothic Horror | `gothic_horror` | Next |
+| 3 | Pirate | `pirate` | Queued |
+| 4 | Space Age | `space_age` | Queued |
+| 5 | Kitchen Witchery | `kitchen_witchery` | Queued |
+| 6 | Prairie Homestead | `prairie_homestead` | Queued |
+| 7 | Velvet & Leather | `velvet_leather` | Queued |
+
+Backdrop-wide constraints: 16:9 at 2K, bright enough to retain shadow detail, with a broad quiet center and lower-center area for the board and HUD. Decoration belongs at the edges and corners. Backdrops contain no board, grid, tiles, rack, UI, text, people, or logos.
 
 Each pack uses four independent generations so the images remain directly usable rather than being cropped from a concept sheet:
 
@@ -48,7 +62,7 @@ Each pack uses four independent generations so the images remain directly usable
 3. `tile` - square blank tile face, orthographic, no glyphs or text.
 4. `rack` - wide front-facing shelf or holder on a plain removable background.
 
-### Arcane Codex
+### Wizardry (Arcane Codex)
 
 Deep violet wizard study, aged parchment and dark walnut, antique-gold filigree, restrained cyan and magenta magical glints, candlelit dark-academia atmosphere.
 
@@ -57,15 +71,21 @@ Generated backdrops:
 - `backgrounds/generated/arcane_codex/Arcane Codex Backdrop v1-dark.png` - OpenArt history `JQykjlQwXwRMIAt9Jk5W`, GPT Image 2 text-to-image, 2304x1296 PNG.
 - `backgrounds/generated/arcane_codex/Arcane Codex Backdrop v2-bright.png` - OpenArt history `9tEFfkqQ1EU8V3FHFXIA`, GPT Image 2 image-to-image lighting revision, 2304x1296 PNG. Current integration candidate.
 
-### Classic Grimoire
+### Gothic Horror
 
-Weathered pale stone and dark walnut, iron cornerwork, worn parchment, muted burgundy and navy heraldic accents, warm library lamplight.
+Elegant haunted Victorian library and crypt materials: charcoal stone, blackened carved oak, tarnished silver, dried crimson roses, smoky candlelight and cool moonlight. Frightening but refined; no gore, monsters, bodies, or faces.
 
-### Spiral Sigil
+### Pirate
 
-Polished obsidian, subtle ember fractures, concentric astronomical engravings, deep indigo void, cold silver edges with sparse gold points of light.
+Weathered captain's cabin: dark teak, sea charts, rope, brass navigation instruments, salt-worn canvas, lantern gold and stormy ocean-blue light.
 
-## Proposed theme prompts
+### Space Age
+
+Optimistic retro-futurist starship: brushed alloy, molded ivory panels, midnight-blue observation windows, luminous instrument accents, subtle stars and restrained nebula color.
+
+### Kitchen Witchery
+
+Welcoming enchanted cottage kitchen: worn butcher block, hammered copper cookware, drying herbs, apothecary jars, flour-dusted linen and warm hearth glow, with tiny restrained magical glints.
 
 ### Prairie Homestead
 
