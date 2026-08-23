@@ -31,6 +31,8 @@ func _run() -> void:
 
 	if not main.title_screen is TitleScreen or main.title_center != main.title_screen:
 		failures.append("title screen was not extracted or aliased")
+	if not main.theme_intro_card is ThemeIntroCard:
+		failures.append("theme intro card was not extracted")
 	if not main.setup_screen is SetupScreen or main.setup_panel != main.setup_screen.panel:
 		failures.append("setup screen was not extracted or aliased")
 	if not main.blank_popup is BlankPicker:

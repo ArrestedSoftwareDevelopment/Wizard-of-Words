@@ -23,6 +23,7 @@ func _initialize() -> void:
 		seen_ids[theme_id] = true
 		_check_texture(str(theme.get("backdrop", "")), "%s backdrop" % theme_id, failures)
 		_check_texture(str(theme.get("tile", "")), "%s tile" % theme_id, failures)
+		_check_font(str(theme.get("title_font", "")), "%s title font" % theme_id, failures)
 		var bonus_file := str(theme.get("bonus_lexicon", ""))
 		if bonus_file == "":
 			failures.append("%s has no bonus lexicon" % theme_id)
@@ -98,3 +99,12 @@ func _check_texture(path: String, label: String, failures: Array) -> void:
 		return
 	if not (load(path) is Texture2D):
 		failures.append("%s is not a loadable texture: %s" % [label, path])
+
+
+func _check_font(path: String, label: String, failures: Array) -> void:
+	if not FileAccess.file_exists(path):
+		failures.append("%s missing: %s" % [label, path])
+		return
+	var font := FontFile.new()
+	if font.load_dynamic_font(path) != OK:
+		failures.append("%s is not a loadable font: %s" % [label, path])

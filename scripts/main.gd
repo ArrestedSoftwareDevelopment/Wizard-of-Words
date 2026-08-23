@@ -14,9 +14,14 @@ const SETUP_SCREEN_SCENE := preload("res://scenes/screens/setup_screen.tscn")
 const GAME_HUD_SCENE := preload("res://scenes/components/game_hud.tscn")
 const BLANK_PICKER_SCENE := preload("res://scenes/components/blank_picker.tscn")
 const TRADE_DIALOG_SCENE := preload("res://scenes/components/trade_dialog.tscn")
+const THEME_INTRO_CARD_SCENE := preload("res://scenes/components/theme_intro_card.tscn")
 const THEME_CATALOG := preload("res://scripts/ui/theme_catalog.gd")
 const MENU_FADE_SECONDS := 0.45
-const ATMOSPHERE_HOLD_SECONDS := 2.25
+const BACKDROP_PRE_TITLE_SECONDS := 0.55
+const TITLE_FADE_IN_SECONDS := 0.70
+const TITLE_HOLD_SECONDS := 1.55
+const TITLE_FADE_OUT_SECONDS := 0.65
+const BACKDROP_POST_TITLE_SECONDS := 0.25
 const GAME_FADE_SECONDS := 1.15
 
 var ruleset: WordRuleset
@@ -72,6 +77,7 @@ var title_screen: TitleScreen
 var setup_screen: SetupScreen
 var game_hud: GameHud
 var trade_dialog: TradeDialog
+var theme_intro_card: ThemeIntroCard
 var match_config: MatchConfig
 var match_state: MatchState
 var backdrop_rect: TextureRect
@@ -92,6 +98,7 @@ func _ready() -> void:
 	_build_blank_picker()
 	_build_setup()
 	_build_title()
+	_build_theme_intro_card()
 	theme_stage.layout_changed.connect(_on_viewport_size_changed)
 	_show_title()
 
@@ -161,6 +168,11 @@ func _build_title() -> void:
 	title_screen.create_requested.connect(_show_create)
 	add_child(title_screen)
 	title_center = title_screen
+
+
+func _build_theme_intro_card() -> void:
+	theme_intro_card = THEME_INTRO_CARD_SCENE.instantiate()
+	add_child(theme_intro_card)
 
 
 func _hide_game_and_setup() -> void:
@@ -319,7 +331,9 @@ func _transition_to_game() -> void:
 	menu_tween.tween_property(departing_screen, "modulate:a", 0.0, MENU_FADE_SECONDS)
 	await menu_tween.finished
 	departing_screen.visible = false
-	await get_tree().create_timer(ATMOSPHERE_HOLD_SECONDS).timeout
+	await get_tree().create_timer(BACKDROP_PRE_TITLE_SECONDS).timeout
+	await theme_intro_card.play(active_theme, TITLE_FADE_IN_SECONDS, TITLE_HOLD_SECONDS, TITLE_FADE_OUT_SECONDS)
+	await get_tree().create_timer(BACKDROP_POST_TITLE_SECONDS).timeout
 	_build_game_ui()
 	game_root.modulate.a = 0.0
 	var game_tween := create_tween()
