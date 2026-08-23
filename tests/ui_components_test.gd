@@ -79,6 +79,19 @@ func _run() -> void:
 		failures.append("trade dialog was not extracted or aliased")
 	_capture("res://.godot/phase2-game.png")
 
+	main.current = 1
+	main.match_state.current_player = 1
+	main._run_ai_turn()
+	await process_frame
+	if not main._ai_thinking:
+		failures.append("AI thinking coroutine did not start")
+	main._show_title()
+	await create_timer(0.35).timeout
+	if main._ai_thinking:
+		failures.append("AI thinking coroutine survived leaving the match")
+	if main.game_root != null:
+		failures.append("game UI survived returning to the title")
+
 	if failures.is_empty():
 		print("RESULT: ALL PASS")
 		quit(0)

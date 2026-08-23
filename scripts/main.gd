@@ -80,6 +80,8 @@ var active_theme: Dictionary = {}
 var _resize_pending := false
 var _game_transitioning := false
 var skip_intro_animation := false
+var _ai_turn_serial := 0
+var _ai_thinking := false
 
 
 func _ready() -> void:
@@ -162,6 +164,7 @@ func _build_title() -> void:
 
 
 func _hide_game_and_setup() -> void:
+	_cancel_ai_turn()
 	if game_root != null:
 		game_root.queue_free()
 		game_root = null
@@ -578,6 +581,7 @@ func _append_move_log(pl: Dictionary, positions: Array, word_names: Array, score
 func _on_new_game() -> void:
 	if _game_transitioning:
 		return
+	_cancel_ai_turn()
 	if ruleset_select.item_count == 0:
 		_log("No rulesets found in res://data/rulesets/.")
 		return
@@ -893,18 +897,35 @@ func _get_ai_lexicon() -> Lexicon:
 
 
 func _run_ai_turn() -> void:
+	_ai_turn_serial += 1
+	var turn_serial := _ai_turn_serial
+	_ai_thinking = true
+	var thinking_label: Label = turn_label
+	if not is_instance_valid(thinking_label) or current < 0 or current >= players.size():
+		_ai_thinking = false
+		return
 	var pl: Dictionary = players[current]
 	refresh_hud()
 	var think_time := randf_range(1.3, 2.6)
 	var elapsed := 0.0
-	while elapsed < think_time and not game_over and players[current].get("is_ai", false):
+	while elapsed < think_time:
+		if turn_serial != _ai_turn_serial or not is_instance_valid(thinking_label):
+			_ai_thinking = false
+			return
+		if game_over or current < 0 or current >= players.size() or not players[current].get("is_ai", false):
+			_ai_thinking = false
+			return
 		var dots := ".".repeat(1 + int(elapsed * 3.0) % 3)
-		turn_label.text = "%s ponders the arcane%s" % [pl["name"], dots]
-		turn_label.modulate.a = 0.65 + 0.35 * absf(sin(elapsed * 5.0))
+		thinking_label.text = "%s ponders the arcane%s" % [pl["name"], dots]
+		thinking_label.modulate.a = 0.65 + 0.35 * absf(sin(elapsed * 5.0))
 		await get_tree().create_timer(0.25).timeout
 		elapsed += 0.25
-	turn_label.modulate.a = 1.0
-	if game_over or not players[current].get("is_ai", false):
+	if turn_serial != _ai_turn_serial or not is_instance_valid(thinking_label):
+		_ai_thinking = false
+		return
+	thinking_label.modulate.a = 1.0
+	_ai_thinking = false
+	if game_over or current < 0 or current >= players.size() or not players[current].get("is_ai", false):
 		return
 	var lex_for_ai := lexicon if ai_difficulty == "archmage" else _get_ai_lexicon()
 	var move: Variant = AiPlayer.choose_move(board, pl["rack"], ruleset, lex_for_ai, ai_difficulty)
@@ -949,6 +970,13 @@ func _run_ai_turn() -> void:
 		refresh_all()
 		if not game_over and players[current].get("is_ai", false):
 			_run_ai_turn()
+
+
+func _cancel_ai_turn() -> void:
+	_ai_turn_serial += 1
+	_ai_thinking = false
+	if is_instance_valid(turn_label):
+		turn_label.modulate.a = 1.0
 
 
 func _open_trade() -> void:
