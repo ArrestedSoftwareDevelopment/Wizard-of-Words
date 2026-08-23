@@ -47,8 +47,8 @@ Visual themes are reusable skins and do not define gameplay. Classic Grimoire an
 | --- | --- | --- | --- |
 | 1 | Wizardry | `wizardry` | Accepted and downloaded (Arcane Codex v2-bright) |
 | 2 | Gothic Horror | `gothic_horror` | Accepted and downloaded |
-| 3 | Pirate | `pirate` | Next |
-| 4 | Space Age | `space_age` | Queued |
+| 3 | Pirate | `pirate` | Accepted and downloaded |
+| 4 | Space Age | `space_age` | Next |
 | 5 | Kitchen Witchery | `kitchen_witchery` | Queued |
 | 6 | Prairie Homestead | `prairie_homestead` | Queued |
 | 7 | Velvet & Leather | `velvet_leather` | Queued |
@@ -84,6 +84,12 @@ Final prompt summary: full-screen premium painterly game backdrop; elegant haunt
 ### Pirate
 
 Weathered captain's cabin: dark teak, sea charts, rope, brass navigation instruments, salt-worn canvas, lantern gold and stormy ocean-blue light.
+
+Generated backdrops:
+
+- `backgrounds/generated/pirate/Pirate Backdrop v1.png` - OpenArt history `Kk5uVWW59C7cNS2l6ZJY`, GPT Image 2 text-to-image, 2304x1296 PNG. Accepted.
+
+Final prompt summary: full-screen premium painterly pirate captain's cabin; dark teak, salt-worn canvas, rope, charts, brass instruments and lanterns; storm-blue sea through stern windows; bright open midtones; broad uncluttered plank center; props at edges; no central table, board, tiles, UI, readable text, figures, skeletons, or violence.
 
 ### Space Age
 
