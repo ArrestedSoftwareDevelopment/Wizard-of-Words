@@ -2,6 +2,8 @@
 
 Recommended models on OpenArt: **Flux.1 (dev)** for clean, text-free game assets and coherent grids; **SDXL** (e.g. Juggernaut or DreamShaper) for painterly/stylized looks. Generate at the largest size available; we scale in-engine.
 
+Current OpenArt production model: **GPT Image 2**, 2K PNG, medium quality unless an asset needs transparent edges or higher detail.
+
 Universal negative prompt:
 `letters, text, words, numbers, watermark, signature, tiles with symbols, game pieces, hands, fingers, person, perspective distortion, fisheye, blur, jpeg artifacts`
 
@@ -34,3 +36,36 @@ Set of six circular arcane medallion icons arranged in a grid, each etched with 
 ```
 Ornate horizontal wooden shelf bracket carved with arcane runes, dark stained wood with gold inlay, front orthographic view, wide thin banner shape, transparent-friendly plain dark background, fantasy UI asset, high detail
 ```
+
+---
+
+## Active theme packs
+
+Each pack uses four independent generations so the images remain directly usable rather than being cropped from a concept sheet:
+
+1. `backdrop` - 16:9 environmental surface, subdued center, no board or interface.
+2. `frame` - square top-down ornamental border with a large, clean central opening.
+3. `tile` - square blank tile face, orthographic, no glyphs or text.
+4. `rack` - wide front-facing shelf or holder on a plain removable background.
+
+### Arcane Codex
+
+Deep violet wizard study, aged parchment and dark walnut, antique-gold filigree, restrained cyan and magenta magical glints, candlelit dark-academia atmosphere.
+
+### Classic Grimoire
+
+Weathered pale stone and dark walnut, iron cornerwork, worn parchment, muted burgundy and navy heraldic accents, warm library lamplight.
+
+### Spiral Sigil
+
+Polished obsidian, subtle ember fractures, concentric astronomical engravings, deep indigo void, cold silver edges with sparse gold points of light.
+
+## Proposed theme prompts
+
+### Prairie Homestead
+
+1870s American frontier homestead materials: honeyed pine, hand-pieced quilt geometry, pressed prairie wildflowers, blackened iron stove hardware, amber oil-lamp glow, wheat gold and dusty blue. No people, text, logos, or recognizable television imagery.
+
+### Velvet & Leather
+
+Tasteful consensual-adult BDSM-inspired luxury: black leather, oxblood velvet, quilted panels, brushed brass rings and buckles, candlelit shadows, elegant high-end boudoir craft. Non-explicit; no people, bodies, nudity, anatomy, sexual acts, text, or logos.

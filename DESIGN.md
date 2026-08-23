@@ -55,6 +55,7 @@ The signature departure from Scrabble/WWF:
 - [ ] ODict (github.com/TheOpenDictionary/odict) - compiled lexical-entry format; candidate for a future "word definitions" lookup feature (GPL-3.0 toolchain, consume exported files only)
 
 ## Presentation Wishlist
+- [ ] **Responsive board stage**: scale the frame, board, cells, tile faces, and rack together to consume the largest square available on the current display, leaving only a small safe-area border; derive cell size from the board stage rather than a fixed constant.
 - **VFX plan (staged)**:
   1. *Commit burst*: particle puff + tile "settle" bounce when a rune lands (Godot Tween + CPUParticles2D)
   2. *Score float*: word score rises from the played line, gold for normal, theme color for surges
@@ -70,6 +71,21 @@ The signature departure from Scrabble/WWF:
 - Word-score popups floating from played words
 - Board background: starfield sigil that subtly reacts to moves
 - Screen shake / chime intensity scaled to points earned
+
+### Theme production
+
+Current asset work should complete the three playable ruleset skins before adding more runtime choices:
+
+1. **Arcane Codex** - violet wizard study, parchment, antique gold, luminous cyan/magenta sigils.
+2. **Classic Grimoire** - carved stone, dark walnut, worn parchment, restrained heraldic details.
+3. **Spiral Sigil** - obsidian, subtle ember fractures, astronomical spirals, deep indigo void.
+
+Future theme proposals:
+
+- **Prairie Homestead** - 1870s American frontier warmth: honeyed pine, hand-pieced quilt geometry, pressed wildflowers, iron stove hardware, amber lamplight, wheat and dusty blue accents. Period-inspired rather than tied to specific copyrighted characters or scenes.
+- **Velvet & Leather** - tasteful, consensual-adult BDSM-inspired luxury: black leather, oxblood velvet, brushed brass rings and buckles, quilted surfaces, candlelit shadows, elegant restraint. Non-explicit; no bodies, nudity, text, or sexual acts.
+
+Every production theme should eventually provide a backdrop, board frame, blank tile face, rack/shelf, palette, and optional premium-cell ornament set. Source prompts and generation records live in `data/graphics/PROMPTS.md`.
 
 ## UX Upgrades
 - [x] Drag-and-drop tiles (rack -> board, pending -> reposition)
