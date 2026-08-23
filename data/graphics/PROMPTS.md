@@ -90,6 +90,12 @@ Generated backdrops:
 
 - `backgrounds/generated/pirate/Pirate Backdrop v1.png` - OpenArt history `Kk5uVWW59C7cNS2l6ZJY`, GPT Image 2 text-to-image, 2304x1296 PNG. Accepted.
 
+Generated tiles:
+
+- `tiles/generated/pirate/Pirate Tile v2.png` - Codex built-in image generation, 1254x1254 opaque PNG. Dark salt-worn teak, warm parchment inset, thin antique-brass line and four pinheads; hard square corners with teak covering every image edge. Accepted after rejecting a rounded v1 with baked black corner background.
+
+Final tile prompt summary: seamless full-bleed blank Pirate tile repeated across a 15x15 grid; calm aged-parchment center covering at least 82%; dark salt-worn teak border, thin antique-brass inset and four small pinheads; hard square corners with brown teak in all literal corner pixels; no nautical emblems, text, background, checkerboard, or multiple tiles.
+
 Final prompt summary: full-screen premium painterly pirate captain's cabin; dark teak, salt-worn canvas, rope, charts, brass instruments and lanterns; storm-blue sea through stern windows; bright open midtones; broad uncluttered plank center; props at edges; no central table, board, tiles, UI, readable text, figures, skeletons, or violence.
 
 ### Space Age
@@ -109,6 +115,12 @@ Welcoming enchanted cottage kitchen: worn butcher block, hammered copper cookwar
 Generated backdrops:
 
 - `backgrounds/generated/kitchen_witchery/Kitchen Witchery Backdrop v1.png` - OpenArt history `Jh7odoMi7f1OF4CvBPhl`, GPT Image 2 text-to-image, 2304x1296 PNG. Accepted.
+
+Generated tiles:
+
+- `tiles/generated/kitchen_witchery/Kitchen Witchery Tile v2.png` - Codex built-in image generation, 1254x1254 opaque PNG. Muted herb-green glazed ceramic, worn butcher-block bevel, thin copper inset and four copper pinheads; hard square corners with wood covering every image edge. Accepted.
+
+Final tile prompt summary: seamless full-bleed blank Kitchen Witchery tile repeated across a 15x15 grid; calm deep herb-green ceramic center covering at least 82%; honey-brown butcher-block border, thin hammered-copper line and four pinheads; hard square corners; no herbs, cookware, food, text, background, checkerboard, or multiple tiles.
 
 Final prompt summary: full-screen premium painterly enchanted cottage kitchen; honeyed wood, cream plaster, copper cookware, herbs, unlabeled jars, linen, morning light and hearth glow; broad immaculate butcher-block center; details at edges; no board, tiles, UI, text, figures, animals, brands, or copyrighted characters.
 
