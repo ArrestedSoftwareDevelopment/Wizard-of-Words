@@ -49,18 +49,19 @@ Visual themes are reusable skins and do not define gameplay. Classic Grimoire an
 | 2 | Gothic Horror | `gothic_horror` | Accepted and downloaded |
 | 3 | Pirate | `pirate` | Accepted and downloaded |
 | 4 | Space Age | `space_age` | Accepted and downloaded |
-| 5 | Kitchen Witchery | `kitchen_witchery` | Next |
-| 6 | Prairie Homestead | `prairie_homestead` | Queued |
+| 5 | Kitchen Witchery | `kitchen_witchery` | Accepted and downloaded |
+| 6 | Prairie Homestead | `prairie_homestead` | Next |
 | 7 | Velvet & Leather | `velvet_leather` | Queued |
 
 Backdrop-wide constraints: 16:9 at 2K, bright enough to retain shadow detail, with a broad quiet center and lower-center area for the board and HUD. Decoration belongs at the edges and corners. Backdrops contain no board, grid, tiles, rack, UI, text, people, or logos.
 
-Each pack uses four independent generations so the images remain directly usable rather than being cropped from a concept sheet:
+Each pack uses independent generations so the images remain directly usable rather than being cropped from a concept sheet:
 
 1. `backdrop` - 16:9 environmental surface, subdued center, no board or interface.
-2. `frame` - square top-down ornamental border with a large, clean central opening.
-3. `tile` - square blank tile face, orthographic, no glyphs or text.
-4. `rack` - wide front-facing shelf or holder on a plain removable background.
+2. `tile` - square blank tile face, orthographic, no glyphs or text.
+3. `rack` - wide front-facing shelf or holder on a plain removable background.
+
+The backdrop supplies the full-screen environmental framing. Runtime board treatment should be limited to a subtle bevel, rim light, or shadow. Generate a separate ornate frame only if a specific theme proves to need one after integration.
 
 ### Wizardry (Arcane Codex)
 
@@ -104,6 +105,12 @@ Final prompt summary: full-screen premium painterly retro-futurist observation l
 ### Kitchen Witchery
 
 Welcoming enchanted cottage kitchen: worn butcher block, hammered copper cookware, drying herbs, apothecary jars, flour-dusted linen and warm hearth glow, with tiny restrained magical glints.
+
+Generated backdrops:
+
+- `backgrounds/generated/kitchen_witchery/Kitchen Witchery Backdrop v1.png` - OpenArt history `Jh7odoMi7f1OF4CvBPhl`, GPT Image 2 text-to-image, 2304x1296 PNG. Accepted.
+
+Final prompt summary: full-screen premium painterly enchanted cottage kitchen; honeyed wood, cream plaster, copper cookware, herbs, unlabeled jars, linen, morning light and hearth glow; broad immaculate butcher-block center; details at edges; no board, tiles, UI, text, figures, animals, brands, or copyrighted characters.
 
 ### Prairie Homestead
 
