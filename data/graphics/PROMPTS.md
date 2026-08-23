@@ -52,6 +52,11 @@ Each pack uses four independent generations so the images remain directly usable
 
 Deep violet wizard study, aged parchment and dark walnut, antique-gold filigree, restrained cyan and magenta magical glints, candlelit dark-academia atmosphere.
 
+Generated backdrops:
+
+- `backgrounds/generated/arcane_codex/Arcane Codex Backdrop v1-dark.png` - OpenArt history `JQykjlQwXwRMIAt9Jk5W`, GPT Image 2 text-to-image, 2304x1296 PNG.
+- `backgrounds/generated/arcane_codex/Arcane Codex Backdrop v2-bright.png` - OpenArt history `9tEFfkqQ1EU8V3FHFXIA`, GPT Image 2 image-to-image lighting revision, 2304x1296 PNG. Current integration candidate.
+
 ### Classic Grimoire
 
 Weathered pale stone and dark walnut, iron cornerwork, worn parchment, muted burgundy and navy heraldic accents, warm library lamplight.
