@@ -23,8 +23,10 @@ func _initialize() -> void:
 		seen_ids[theme_id] = true
 		_check_texture(str(theme.get("backdrop", "")), "%s backdrop" % theme_id, failures)
 		var bonus_file := str(theme.get("bonus_lexicon", ""))
-		if bonus_file != "" and not FileAccess.file_exists("res://data/dictionaries/" + bonus_file):
-			failures.append("%s bonus lexicon missing: %s" % [theme_id, bonus_file])
+		if bonus_file == "":
+			failures.append("%s has no bonus lexicon" % theme_id)
+		else:
+			_check_bonus_lexicon(theme_id, bonus_file, failures)
 
 	var dir := DirAccess.open("res://data/rulesets")
 	if dir == null:
@@ -66,6 +68,27 @@ func _check_ruleset_assets(path: String, failures: Array) -> void:
 	for key in ["tiles", "background", "frame"]:
 		if skin.has(key):
 			_check_texture(String(skin[key]), "%s skin" % path.get_file(), failures)
+
+
+func _check_bonus_lexicon(theme_id: String, filename: String, failures: Array) -> void:
+	var path := "res://data/dictionaries/" + filename
+	if not FileAccess.file_exists(path):
+		failures.append("%s bonus lexicon missing: %s" % [theme_id, filename])
+		return
+	var seen: Dictionary = {}
+	var word_count := 0
+	for raw_line in FileAccess.get_file_as_string(path).split("\n"):
+		var word := raw_line.strip_edges()
+		if word == "":
+			continue
+		word_count += 1
+		if not word.is_valid_identifier() or word != word.to_upper() or word.contains("_"):
+			failures.append("%s bonus lexicon has malformed word: %s" % [theme_id, word])
+		if seen.has(word):
+			failures.append("%s bonus lexicon repeats: %s" % [theme_id, word])
+		seen[word] = true
+	if word_count < 25:
+		failures.append("%s bonus lexicon is too small: %d words" % [theme_id, word_count])
 
 
 func _check_texture(path: String, label: String, failures: Array) -> void:

@@ -90,6 +90,8 @@ Backdrop production order is Wizardry, Gothic Horror, Pirate, Space Age, Kitchen
 
 All seven backdrops are now approved and integrated. Runtime theme selection is independent of ruleset selection; the selected theme's bonus vocabulary is controlled by one **Theme Word Bonuses** switch. The next art pass should replace the temporary shared Wizardry tiles/buttons with theme-specific tile faces, rack treatment, and restrained UI accents proven against the integrated layouts.
 
+All seven themes now have curated bonus lexicons. Prairie Homestead adds 60 frontier, homecraft, and handwork terms (+20); Velvet & Leather adds 58 consensual-adult kink and luxury-material terms (+25). Every entry in both sets is covered by the bundled base dictionaries, and asset tests enforce a nonempty, uppercase, duplicate-free theme lexicon.
+
 Every production theme should provide a backdrop, blank tile face, rack/shelf, palette, and optional premium-cell ornament set. The full-screen backdrop is the primary decorative frame; the playable grid should use only a restrained bevel, rim light, or shadow so the board can scale freely without visual overload. Separate ornate board-frame artwork is optional, not a required theme asset. Source prompts and generation records live in `data/graphics/PROMPTS.md`.
 
 ## UX Upgrades

@@ -65,6 +65,20 @@
 		"bonus_points": 15,
 		"bonus_flavor": "The cauldron bubbles"
 	},
+	"prairie_homestead.txt": {
+		"title": "Prairie Homestead (60 words)",
+		"description": "Bonus file: frontier homecraft, prairie life and handwork. Playing these words triggers a warm surge (+20 each).",
+		"default_checked": false,
+		"bonus_points": 20,
+		"bonus_flavor": "The prairie wind rises"
+	},
+	"velvet_leather.txt": {
+		"title": "Velvet & Leather (58 words)",
+		"description": "Bonus file: consensual-adult kink vocabulary and luxurious materials. Playing these words triggers a velvet surge (+25 each).",
+		"default_checked": false,
+		"bonus_points": 25,
+		"bonus_flavor": "The candlelight deepens"
+	},
 	"two_letter_whitelist.txt": {
 		"title": "Two-Letter Whitelist",
 		"description": "Trusted two-letter words used by the 'strict two-letter' ruleset toggle. Not playable on its own."

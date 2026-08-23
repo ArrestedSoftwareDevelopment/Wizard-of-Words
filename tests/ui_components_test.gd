@@ -46,8 +46,11 @@ func _run() -> void:
 	if main.setup_screen.theme_preview.texture == null:
 		failures.append("setup theme preview did not load")
 	main.setup_screen.select_theme("prairie_homestead")
-	if not main.setup_screen.theme_bonus_check.disabled:
-		failures.append("uncurated Prairie bonus vocabulary should be marked unavailable")
+	if main.setup_screen.theme_bonus_check.disabled:
+		failures.append("Prairie bonus vocabulary should be available")
+	main.setup_screen.select_theme("velvet_leather")
+	if main.setup_screen.theme_bonus_check.disabled:
+		failures.append("Velvet bonus vocabulary should be available")
 	main.setup_screen.select_theme("wizardry")
 	if main.setup_screen.theme_bonus_check.disabled:
 		failures.append("Wizardry bonus vocabulary should be available")
