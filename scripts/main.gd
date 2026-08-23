@@ -74,6 +74,7 @@ var match_state: MatchState
 
 
 func _ready() -> void:
+	get_window().min_size = Vector2i(1024, 720)
 	var bg := ColorRect.new()
 	bg.color = COLOR_BG
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -82,6 +83,24 @@ func _ready() -> void:
 	_build_setup()
 	_build_title()
 	_show_title()
+
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if not event is InputEventKey or not event.pressed or event.echo:
+		return
+	if event.keycode == KEY_F11:
+		_toggle_fullscreen()
+		get_viewport().set_input_as_handled()
+	elif event.keycode == KEY_ESCAPE and get_window().mode in [Window.MODE_FULLSCREEN, Window.MODE_EXCLUSIVE_FULLSCREEN]:
+		get_window().mode = Window.MODE_WINDOWED
+		get_viewport().set_input_as_handled()
+
+
+func _toggle_fullscreen() -> void:
+	if get_window().mode in [Window.MODE_FULLSCREEN, Window.MODE_EXCLUSIVE_FULLSCREEN]:
+		get_window().mode = Window.MODE_WINDOWED
+	else:
+		get_window().mode = Window.MODE_FULLSCREEN
 
 
 func _load_tile_font() -> void:
@@ -204,6 +223,10 @@ func _build_game_ui() -> void:
 	setup_screen.visible = false
 	add_child(game_root)
 
+	var left_spacer := Control.new()
+	left_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	game_root.add_child(left_spacer)
+
 	board_shell = BOARD_SHELL_SCENE.instantiate()
 	game_root.add_child(board_shell)
 	board_shell.configure(ruleset.skin, ruleset.board_size, CELL_SIZE, self)
@@ -213,6 +236,7 @@ func _build_game_ui() -> void:
 	refresh_board()
 
 	game_hud = GAME_HUD_SCENE.instantiate()
+	game_hud.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	game_root.add_child(game_hud)
 	game_hud.cast_requested.connect(_on_play)
 	game_hud.recall_requested.connect(_on_recall)
@@ -229,6 +253,10 @@ func _build_game_ui() -> void:
 	shuffle_btn = game_hud.shuffle_button
 	pass_btn = game_hud.pass_button
 	trade_btn = game_hud.trade_button
+
+	var right_spacer := Control.new()
+	right_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	game_root.add_child(right_spacer)
 
 
 func _apply_tile_look(b: Button, label: String, value: int, base: Color, letter_size := 22) -> void:

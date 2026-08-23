@@ -141,6 +141,7 @@ Ratios describe the artwork's inner opening after aspect-cover cropping. A later
 - Added minimum-length cross-word regression coverage and corrected the validator.
 - Extracted `BoardShell` and `BoardView` scenes/scripts from `main.gd`.
 - Added per-frame content geometry and visually verified all four shipped frames at 1280x900.
+- Enabled fullscreen canvas scaling with expanded aspect support and a centered board/HUD composition; verified at 1680x1050 while retaining a 1024x720 minimum window.
 
 ## Online play model
 

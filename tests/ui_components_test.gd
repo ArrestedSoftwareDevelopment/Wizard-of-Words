@@ -18,6 +18,12 @@ func _capture(path: String) -> void:
 
 func _run() -> void:
 	var failures: Array[String] = []
+	if int(ProjectSettings.get_setting("display/window/size/mode", 0)) != 3:
+		failures.append("fullscreen is not the default window mode")
+	if str(ProjectSettings.get_setting("display/window/stretch/mode", "")) != "canvas_items":
+		failures.append("canvas scaling is not enabled")
+	if str(ProjectSettings.get_setting("display/window/stretch/aspect", "")) != "expand":
+		failures.append("expanded aspect scaling is not enabled")
 	var main: Variant = load("res://scenes/main.tscn").instantiate()
 	root.add_child(main)
 	await process_frame

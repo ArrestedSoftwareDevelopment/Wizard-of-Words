@@ -24,6 +24,8 @@ Wizard of Words is an in-development word-crafting duel built with Godot. Player
 
 Open `project.godot` in Godot and run the main scene.
 
+The game launches fullscreen and scales its 1280x900 design canvas across the available display. Press **F11** to toggle fullscreen, or **Escape** to return to a window. The minimum supported window size is 1024x720.
+
 ## Tests
 
 Tests are headless `SceneTree` scripts under `tests/`. Run them from the project directory with your Godot executable:
