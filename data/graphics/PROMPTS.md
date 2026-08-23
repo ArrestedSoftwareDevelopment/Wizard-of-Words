@@ -120,6 +120,12 @@ Generated backdrops:
 
 - `backgrounds/generated/prairie_homestead/Prairie Homestead Backdrop v1.png` - OpenArt history `TKv8RueCuEH30uToEcGI`, GPT Image 2 text-to-image, 2304x1296 PNG. Accepted.
 
+Generated tiles:
+
+- `tiles/generated/prairie_homestead/Prairie Homestead Tile v2.png` - Codex built-in image generation, 1254x1254 opaque PNG. Restrained honeyed maple with a single dusty-blue inset and four wheat-gold corner diamonds; exact orthographic square with artwork extending to every image edge. Accepted after rejecting two fake-transparency variants and an overly busy quilt-border v1.
+
+Final tile prompt summary: seamless edge-to-edge blank Prairie letter tile repeated across a 15x15 grid; calm medium honeyed maple center covering at least 82%; one narrow dusty-blue inset and exactly four tiny wheat-gold corner diamonds; no repeated edge motifs; exact front orthographic view; opaque full-canvas texture; no surrounding background, checkerboard, text, glyphs, scenery, or multiple tiles.
+
 Final prompt summary: full-screen premium painterly 1870s frontier homestead; honeyed pine, iron cookstove, cream crockery, quilts, wildflowers, oil lamps and prairie windows; soft late-afternoon light; broad uncluttered pine center; no board, tiles, UI, text, figures, modern objects, brands, or recognizable copyrighted sets.
 
 ### Velvet & Leather
@@ -129,5 +135,11 @@ Tasteful consensual-adult BDSM-inspired luxury: black leather, oxblood velvet, q
 Generated backdrops:
 
 - `backgrounds/generated/velvet_leather/Velvet and Leather Backdrop v1.png` - OpenArt history `ato1lIYir6WVefC4RS4a`, GPT Image 2 text-to-image, 2304x1296 PNG. Accepted.
+
+Generated tiles:
+
+- `tiles/generated/velvet_leather/Velvet and Leather Tile v1.png` - Codex built-in image generation, 1254x1254 opaque PNG. Oxblood velvet, matte black leather and aged brass; exact orthographic square with artwork extending to every image edge. Accepted after rejecting a fake-transparency variant.
+
+Final tile prompt summary: seamless edge-to-edge blank Velvet & Leather letter tile; oxblood velvet inset, matte black leather, restrained aged-brass frame and four studs; exact front orthographic view; open candlelit midtones; opaque full-canvas texture; no surrounding background, checkerboard, text, bodies, explicit objects, or multiple tiles.
 
 Final prompt summary: full-screen premium painterly consensual-adult kink-inspired private salon; oxblood velvet, matte black leather, mahogany, brass rings and buckles, decorative ropework, chains, candles and smoked mirrors; bright open center; no board, tiles, UI, text, people, anatomy, activity, violence, or explicit objects.

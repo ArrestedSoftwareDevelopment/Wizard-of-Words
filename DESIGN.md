@@ -88,7 +88,9 @@ The seven canonical visual themes are:
 
 Backdrop production order is Wizardry, Gothic Horror, Pirate, Space Age, Kitchen Witchery, Prairie Homestead, then Velvet & Leather. Finish all seven backdrops before generating frames, tiles, racks, or premium ornaments so the overall visual range can be reviewed as one coherent set.
 
-All seven backdrops are now approved and integrated. Runtime theme selection is independent of ruleset selection; the selected theme's bonus vocabulary is controlled by one **Theme Word Bonuses** switch. The next art pass should replace the temporary shared Wizardry tiles/buttons with theme-specific tile faces, rack treatment, and restrained UI accents proven against the integrated layouts.
+All seven backdrops are now approved and integrated. Runtime theme selection is independent of ruleset selection; the selected theme's bonus vocabulary is controlled by one **Theme Word Bonuses** switch.
+
+All seven themes now have integrated tile faces. Wizardry, Gothic Horror, Pirate, Space Age, and Kitchen Witchery use the strongest existing single-tile sources; Prairie Homestead and Velvet & Leather use new edge-to-edge generated textures. The same themed face is applied to board cells and rack letters. Every theme has been rendered at 1680x1050 to check repeated-grid calm, premium-glyph contrast, and rack readability. Prairie uses a restrained runtime tint to sit back into its warm backdrop. Rack-tray artwork and theme-specific action buttons remain the next supporting-art pass; two Wizardry rack drafts were rejected for unusable framing and were not added to the repository.
 
 All seven themes now have curated bonus lexicons. Prairie Homestead adds 60 frontier, homecraft, and handwork terms (+20); Velvet & Leather adds 58 consensual-adult kink and luxury-material terms (+25). Every entry in both sets is covered by the bundled base dictionaries, and asset tests enforce a nonempty, uppercase, duplicate-free theme lexicon.
 

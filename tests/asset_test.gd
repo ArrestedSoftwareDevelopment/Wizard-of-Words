@@ -22,6 +22,7 @@ func _initialize() -> void:
 			failures.append("theme catalog has missing or duplicate id: %s" % theme_id)
 		seen_ids[theme_id] = true
 		_check_texture(str(theme.get("backdrop", "")), "%s backdrop" % theme_id, failures)
+		_check_texture(str(theme.get("tile", "")), "%s tile" % theme_id, failures)
 		var bonus_file := str(theme.get("bonus_lexicon", ""))
 		if bonus_file == "":
 			failures.append("%s has no bonus lexicon" % theme_id)

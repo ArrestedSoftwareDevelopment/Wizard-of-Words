@@ -17,7 +17,7 @@ const TRADE_DIALOG_SCENE := preload("res://scenes/components/trade_dialog.tscn")
 const THEME_CATALOG := preload("res://scripts/ui/theme_catalog.gd")
 const MENU_FADE_SECONDS := 0.45
 const ATMOSPHERE_HOLD_SECONDS := 2.25
-const GAME_FADE_SECONDS := 0.75
+const GAME_FADE_SECONDS := 1.15
 
 var ruleset: WordRuleset
 var lexicon: Lexicon
@@ -98,6 +98,8 @@ func _apply_theme(theme: Dictionary) -> void:
 	active_theme = theme.duplicate(true)
 	if theme_stage != null:
 		theme_stage.apply_theme(active_theme)
+	if ruleset != null:
+		ruleset.skin["tiles"] = str(active_theme.get("tile", ruleset.skin.get("tiles", "")))
 
 
 func _on_theme_changed(theme_id: String) -> void:
@@ -480,7 +482,8 @@ func _add_skin_texture(b: Button) -> void:
 	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tr.self_modulate = Color(1, 1, 1).darkened(randf_range(0.0, 0.06))
+	var tile_modulate := Color(str(active_theme.get("tile_modulate", "#ffffff")))
+	tr.self_modulate = tile_modulate.darkened(randf_range(0.0, 0.06))
 	b.add_child(tr)
 	b.move_child(tr, 0)
 
@@ -510,6 +513,7 @@ func refresh_rack() -> void:
 		b.focus_mode = Control.FOCUS_NONE
 		var col: Color = COLOR_TILE_SEL if i == selected_rack else COLOR_TILE
 		_apply_tile_look(b, t["letter"] if t["letter"] != "" else "?", t["value"], col, 26)
+		_add_skin_texture(b)
 		if i == selected_rack:
 			var sel := StyleBoxFlat.new()
 			sel.draw_center = false
@@ -593,6 +597,7 @@ func _on_new_game() -> void:
 	if ruleset == null:
 		_log("Failed to load ruleset.")
 		return
+	_apply_theme(active_theme)
 	lexicon = Lexicon.new()
 	var names: Array = []
 	for fname in chosen:

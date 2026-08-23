@@ -38,6 +38,7 @@ func _run() -> void:
 		main._apply_theme(theme)
 		main.game_hud.apply_theme(theme)
 		main._resize_game_board()
+		main.refresh_rack()
 		await process_frame
 		await process_frame
 		if main.backdrop_rect.texture == null:
