@@ -37,6 +37,7 @@ func _run() -> void:
 		var theme_id := str(theme.get("id", "unknown"))
 		main._apply_theme(theme)
 		main.game_hud.apply_theme(theme)
+		main.game_hud.set_premium_legend(main.ruleset.legend, theme)
 		main._resize_game_board()
 		main.refresh_rack()
 		await process_frame
@@ -50,6 +51,10 @@ func _run() -> void:
 		var center: Button = main.board_shell.board_view.cell_buttons[Vector2i(main.ruleset.board_size / 2, main.ruleset.board_size / 2)]
 		if center.find_children("*", "PremiumGlyph", true, false).is_empty():
 			failures.append("%s premium glyph atlas was not applied" % theme_id)
+		if center.has_meta("value_label") or center.has_meta("hover_connected"):
+			failures.append("%s premium cell still contains the tiny hover legend" % theme_id)
+		if main.game_hud.premium_legend_box.get_child_count() != 5:
+			failures.append("%s shelf sigil key is incomplete" % theme_id)
 		var empty_cell: Button = main.board_shell.board_view.cell_buttons[Vector2i(1, 0)]
 		var empty_textures := empty_cell.find_children("*", "TextureRect", true, false)
 		if empty_textures.is_empty() or not is_equal_approx(empty_textures[0].self_modulate.a, main.EMPTY_BOARD_OPACITY):

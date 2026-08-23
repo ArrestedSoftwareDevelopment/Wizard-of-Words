@@ -65,6 +65,13 @@ func _run() -> void:
 		failures.append("game HUD was not extracted or aliased")
 	if main.game_hud.rack_box.custom_minimum_size.x < 400.0:
 		failures.append("game HUD does not reserve space for a full rack")
+	if main.game_hud.premium_legend_box.get_child_count() != 5:
+		failures.append("game HUD does not show the five-part sigil key")
+	if not main.game_hud.rack_values_label.text.begins_with("Rune worth"):
+		failures.append("game HUD does not show rack values in the shelf area")
+	var first_rack_tile: Button = main.rack_box.get_child(0)
+	if first_rack_tile.has_meta("value_label") or first_rack_tile.has_meta("hover_connected"):
+		failures.append("rack tiles still contain the tiny hover legend")
 	var full_rack_hud_width: float = main.game_hud.size.x
 	var removed_rune: Control = main.rack_box.get_child(main.rack_box.get_child_count() - 1)
 	main.rack_box.remove_child(removed_rune)

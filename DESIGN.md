@@ -13,7 +13,7 @@ A word-crafting duel where the board itself is alive: hidden magic blooms outwar
 - Splash screen: animated title sigil, "PRESS START" pulse, wizard sprite casting letters
 - CRT/scanline shader as toggle; chiptune SFX/music hooks
 - Glow effects achieved retro-style: blinking outlines, palette-bright halos instead of smooth bloom
-- Tile design (done): large rune + score hidden by default, fades in on mouseover; letter is the hero so swappable open typefaces (OFL: e.g. Press Start 2P, VT323, Silkscreen) can restyle whole tilesets via theme
+- Tile design (done): the letter remains the uncluttered hero; readable rack values and the permanent five-symbol sigil key live together in the shelf panel rather than fading tiny legends over play tiles
 - **Glyph notation** (done): bonuses use tarot/astrology glyphs, not Scrabble abbreviations — ☿ ♄ letter bonuses, ☽ ☉ word bonuses, ⛤ center pentagram; overridable per-ruleset via legend `glyph` field
 - Board coordinates A–O / 1–15 (done) for cell references and replay logs
 
@@ -94,7 +94,7 @@ All seven themes now have integrated tile faces. Wizardry, Gothic Horror, and Sp
 
 Starting a match now presents the selected backdrop as a cinematic title card before the board and HUD arrive. Each theme owns its title face and color in the theme catalog. Pirate uses Pirata One, Space Age uses Orbitron, Kitchen Witchery uses Berkshire Swash, and Prairie Homestead uses Rye; these four faces are bundled under the SIL Open Font License with their license files. Wizardry, Gothic Horror, and Velvet & Leather use the existing project display faces.
 
-Premium squares now use theme-owned five-glyph atlases rather than shared Unicode symbols. Only atlas positions are common; every theme is free to use entirely different objects and silhouettes for double letter, triple letter, center, double word, and triple word. Hover text remains the authoritative accessible description of each multiplier. Generated atlases use a uniform pale production matte removed at render time, because the image generator did not provide genuine alpha even when requested.
+Premium squares now use theme-owned five-glyph atlases rather than shared Unicode symbols. Only atlas positions are common; every theme is free to use entirely different objects and silhouettes for double letter, triple letter, center, double word, and triple word. The shelf panel carries the permanent, readable multiplier key; native tooltips retain the full multiplier names for accessibility. Generated atlases use a uniform pale production matte removed at render time, because the image generator did not provide genuine alpha even when requested.
 
 Empty board cells render at 70% opacity over a transparent board backing, allowing roughly 30% of the environmental backdrop to show through. Premium glyphs, placed letters, pending letters, rack tiles, and all interaction text remain fully opaque.
 

@@ -63,8 +63,6 @@ var trade_popup: PopupPanel
 var trade_box: HBoxContainer
 var trade_selection: Dictionary = {}
 var dict_meta: Dictionary = {}
-var _reveal_font: FontFile = null
-var _reveal_font_tried := false
 var _tile_font: FontFile = null
 var _tile_font_tried := false
 var title_center: Control
@@ -299,6 +297,7 @@ func _build_game_ui() -> void:
 	game_root.add_child(game_hud)
 	game_hud.set_rack_capacity(ruleset.rack_size)
 	game_hud.apply_theme(active_theme)
+	game_hud.set_premium_legend(ruleset.legend, active_theme)
 	game_hud.cast_requested.connect(_on_play)
 	game_hud.recall_requested.connect(_on_recall)
 	game_hud.shuffle_requested.connect(_on_shuffle)
@@ -346,7 +345,7 @@ func _transition_to_game() -> void:
 	_game_transitioning = false
 
 
-func _apply_tile_look(b: Button, label: String, value: int, base: Color, letter_size := 22, opacity := 1.0) -> void:
+func _apply_tile_look(b: Button, label: String, base: Color, letter_size := 22, opacity := 1.0) -> void:
 	letter_size = mini(letter_size, maxi(10, int(b.custom_minimum_size.x * 0.64)))
 	for c in b.get_children():
 		b.remove_child(c)
@@ -380,95 +379,22 @@ func _apply_tile_look(b: Button, label: String, value: int, base: Color, letter_
 	if _tile_font != null:
 		main.add_theme_font_override("font", _tile_font)
 	b.add_child(main)
-	b.set_meta("main_label", main)
-	if value > 0:
-		var vlabel := Label.new()
-		vlabel.text = str(value)
-		vlabel.add_theme_font_size_override("font_size", 10)
-		vlabel.add_theme_color_override("font_color", COLOR_GOLD)
-		vlabel.modulate.a = 0.0
-		vlabel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		vlabel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-		vlabel.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-		vlabel.grow_vertical = Control.GROW_DIRECTION_BEGIN
-		vlabel.offset_right = -3
-		vlabel.offset_bottom = -2
-		b.add_child(vlabel)
-		b.set_meta("value_label", vlabel)
-	if not b.has_meta("hover_connected"):
-		_wire_hover_fade(b)
-
-
-func _wire_hover_fade(b: Button) -> void:
-	b.set_meta("hover_connected", true)
-	b.mouse_entered.connect(func(): _fade_value(b, 1.0))
-	b.mouse_exited.connect(func(): _fade_value(b, 0.0))
-
-
-func _attach_hover_reveal(b: Button, text: String, font_size := 11) -> void:
-	var rlabel := Label.new()
-	rlabel.text = text
-	rlabel.add_theme_font_size_override("font_size", font_size)
-	rlabel.add_theme_color_override("font_color", Color("ffffff"))
-	if _reveal_font == null and not _reveal_font_tried:
-		_load_reveal_font()
-	if _reveal_font != null:
-		rlabel.add_theme_font_override("font", _reveal_font)
-	rlabel.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	rlabel.clip_text = true
-	rlabel.modulate.a = 0.0
-	rlabel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	rlabel.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	rlabel.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	rlabel.set_anchors_preset(Control.PRESET_FULL_RECT)
-	rlabel.offset_left = 2
-	rlabel.offset_right = -2
-	rlabel.offset_top = 2
-	rlabel.offset_bottom = -2
-	b.add_child(rlabel)
-	b.set_meta("value_label", rlabel)
-	_wire_hover_fade(b)
-
-
-func _load_reveal_font() -> void:
-	_reveal_font_tried = true
-	for p in ["res://data/typefaces/Dumbledor-Thin.ttf", "res://data/typefaces/Mage.ttf", "res://data/typefaces/Magehunter.ttf"]:
-		if not FileAccess.file_exists(p):
-			continue
-		var f := FontFile.new()
-		if f.load_dynamic_font(p) == OK:
-			_reveal_font = f
-			return
-
-
-func _fade_value(b: Button, target: float) -> void:
-	if not is_instance_valid(b):
-		return
-	var v = b.get_meta("value_label") if b.has_meta("value_label") else null
-	var m = b.get_meta("main_label") if b.has_meta("main_label") else null
-	if not is_instance_valid(v) and not is_instance_valid(m):
-		return
-	var tw := b.create_tween()
-	if is_instance_valid(v):
-		tw.tween_property(v, "modulate:a", target, 0.15)
-	if is_instance_valid(m):
-		tw.parallel().tween_property(m, "modulate:a", 1.0 - target * 0.85, 0.15)
 
 
 func _apply_prem_style(b: Button, pos: Vector2i) -> void:
 	var tooltip := ""
 	if pending.has(pos):
 		var pt: Dictionary = pending[pos]["tile"]
-		_apply_tile_look(b, pt["letter"] if pt["letter"] != "" else "?", pt["value"], COLOR_TILE_PEND, 28)
+		_apply_tile_look(b, pt["letter"] if pt["letter"] != "" else "?", COLOR_TILE_PEND, 28)
 		_add_skin_texture(b)
 		return
 	if board.tile_at(pos) != null:
 		var t: Dictionary = board.tile_at(pos)
-		_apply_tile_look(b, t["letter"], t["value"], COLOR_TILE, 28)
+		_apply_tile_look(b, t["letter"], COLOR_TILE, 28)
 		_add_skin_texture(b)
 		return
 	if ruleset.fog_of_war and not revealed.has(pos):
-		_apply_tile_look(b, "", 0, ruleset.legend["."]["color"], 22, EMPTY_BOARD_OPACITY)
+		_apply_tile_look(b, "", ruleset.legend["."]["color"], 22, EMPTY_BOARD_OPACITY)
 		b.tooltip_text = ""
 		return
 	var prem: Dictionary = ruleset.premium_at(pos)
@@ -477,11 +403,9 @@ func _apply_prem_style(b: Button, pos: Vector2i) -> void:
 	var glyph_atlas := str(active_theme.get("premium_glyph_atlas", ""))
 	if label != "":
 		tooltip = String(prem["name"])
-	_apply_tile_look(b, "" if glyph_atlas != "" else label, 0, col, 20, 0.0)
+	_apply_tile_look(b, "" if glyph_atlas != "" else label, col, 20, 0.0)
 	_add_skin_texture(b, EMPTY_BOARD_OPACITY)
 	if label != "":
-		var kind := "WORD" if String(prem["type"]) == "word" else "RUNE"
-		var short_name := String(prem["name"]).split("(")[0].strip_edges().to_upper()
 		if ruleset.skin.has("tiles"):
 			var shade := ColorRect.new()
 			shade.color = Color(col.r, col.g, col.b, 0.30)
@@ -496,7 +420,6 @@ func _apply_prem_style(b: Button, pos: Vector2i) -> void:
 				b.add_child(glyph)
 			else:
 				glyph.queue_free()
-		_attach_hover_reveal(b, "%s\n%d × %s" % [short_name, int(prem["mult"]), kind], 9)
 	b.tooltip_text = tooltip
 
 
@@ -541,7 +464,7 @@ func refresh_rack() -> void:
 		b.custom_minimum_size = Vector2(48, 56)
 		b.focus_mode = Control.FOCUS_NONE
 		var col: Color = COLOR_TILE_SEL if i == selected_rack else COLOR_TILE
-		_apply_tile_look(b, t["letter"] if t["letter"] != "" else "?", t["value"], col, 26)
+		_apply_tile_look(b, t["letter"] if t["letter"] != "" else "?", col, 26)
 		_add_skin_texture(b)
 		if i == selected_rack:
 			var sel := StyleBoxFlat.new()
@@ -554,6 +477,7 @@ func refresh_rack() -> void:
 		b.disabled = players[current].get("is_ai", false) or game_over
 		b.pressed.connect(_on_rack_pressed.bind(i))
 		rack_box.add_child(b)
+	game_hud.set_rack_values(rack)
 
 
 func refresh_hud() -> void:
