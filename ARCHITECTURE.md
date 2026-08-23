@@ -207,6 +207,8 @@ Progress (2026-08-23): title, setup, game HUD, blank picker, and trade dialog ar
 
 Exit: a complete match can run headlessly without instantiating `main.tscn`.
 
+Progress (2026-08-23): the first authoritative engine is complete. `MatchConfig` and `MatchState` serialize with schema versions and checksums; `MatchCommand` and `MatchEvent` provide protocol-versioned envelopes; `TileBag` owns seeded randomness; and `MatchEngine` now owns start, placement, pending movement/recall, commit/scoring, fog reveal, refill, rack order, pass, trade, turn advancement, and match-end mutations. `main.gd` is a compatibility adapter and UI/AI coordinator.
+
 ### Phase 4 - Serialization and replay
 
 - Serialize snapshots, commands, and events with schema versions.
@@ -253,15 +255,15 @@ Critical invariants include conservation of tiles, one authoritative turn owner,
 
 ## Immediate next implementation slice
 
-Begin Phase 3 with the state boundary, without changing visible behavior:
+Begin Phase 4 by making the existing match log replayable:
 
-1. Introduce serializable `MatchConfig` and `MatchState` objects.
-2. Extract seeded tile-bag creation and conservation checks.
-3. Define command/event envelopes with protocol and schema versions.
-4. Move start-match, pass, and trade mutations into `MatchEngine` first.
-5. Keep the current controller as an adapter while tests migrate command by command.
+1. Write accepted command/event envelopes rather than presentation-only move summaries.
+2. Add snapshot save/load with schema and protocol compatibility checks.
+3. Add deterministic replay from the initial config/seed and accepted commands.
+4. Compare final snapshot checksums between original and replayed matches.
+5. Add a compact save/resume flow before introducing a network transport.
 
-This creates the authoritative seam needed by replay, AI, and remote play before any networking transport is introduced.
+This turns the authoritative local engine into a durable protocol and proves the exact mechanism remote clients will later use to reconnect and repair desynchronization.
 
 ## Technical references
 

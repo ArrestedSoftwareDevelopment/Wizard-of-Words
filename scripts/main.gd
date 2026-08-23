@@ -69,6 +69,8 @@ var title_screen: TitleScreen
 var setup_screen: SetupScreen
 var game_hud: GameHud
 var trade_dialog: TradeDialog
+var match_config: MatchConfig
+var match_state: MatchState
 
 
 func _ready() -> void:
@@ -443,6 +445,7 @@ func refresh_hud() -> void:
 
 
 func refresh_all() -> void:
+	_sync_match_state_from_aliases()
 	refresh_board()
 	refresh_rack()
 	refresh_hud()
@@ -531,36 +534,25 @@ func _on_new_game() -> void:
 	if frame_select != null and frame_select.selected > 0:
 		ruleset.skin["frame"] = "res://data/graphics/frames/" + frame_select.get_item_text(frame_select.selected)
 
-	board = GameBoard.new()
-	board.setup(ruleset.board_size)
-	bag = []
-	for letter in ruleset.letters:
-		for i in range(int(ruleset.letters[letter]["count"])):
-			bag.append({"letter": letter, "value": int(ruleset.letters[letter]["value"]), "blank": false})
-	for i in range(ruleset.blank_count):
-		bag.append({"letter": "", "value": 0, "blank": true})
-	bag.shuffle()
-
-	players = [
-		{"name": "Apprentice", "score": 0, "rack": [], "is_ai": false},
+	match_config = MatchConfig.new()
+	match_config.ruleset_path = rs_path
+	for filename in chosen:
+		match_config.lexicon_files.append(str(filename))
+	match_config.players = [
+		{"id": "apprentice", "name": "Apprentice", "is_ai": false},
+		{"id": "word-wizard" if ai_check.button_pressed else "rival-apprentice", "name": "Word Wizard" if ai_check.button_pressed else "Rival Apprentice", "is_ai": ai_check.button_pressed},
 	]
-	players.append({"name": "Word Wizard", "score": 0, "rack": [], "is_ai": ai_check.button_pressed} if ai_check.button_pressed else {"name": "Rival Apprentice", "score": 0, "rack": [], "is_ai": false})
-	for pl in players:
-		_refill(pl)
-	current = 0
+	match_config.ai_difficulty = ai_difficulty
+	match_config.fog_of_war = ruleset.fog_of_war
+	match_config.tile_path = str(ruleset.skin.get("tiles", ""))
+	match_config.frame_path = str(ruleset.skin.get("frame", ""))
+	match_config.seed = int(Time.get_unix_time_from_system() * 1000.0) ^ Time.get_ticks_usec()
+	match_state = MatchEngine.start_match(match_config, ruleset)
+	_adopt_match_state()
 	pending.clear()
 	selected_rack = -1
-	passes_in_a_row = 0
-	game_over = false
 	DirAccess.make_dir_recursive_absolute("user://game_logs")
 	match_log_path = "user://game_logs/match_%d.jsonl" % Time.get_unix_time_from_system()
-	revealed.clear()
-	if ruleset.fog_of_war:
-		for dy in range(-ruleset.fog_radius, ruleset.fog_radius + 1):
-			for dx in range(-ruleset.fog_radius, ruleset.fog_radius + 1):
-				var rp: Vector2i = board.center() + Vector2i(dx, dy)
-				if board.in_bounds(rp):
-					revealed[rp] = true
 
 	if game_root != null:
 		game_root.queue_free()
@@ -572,9 +564,28 @@ func _on_new_game() -> void:
 		_run_ai_turn()
 
 
-func _refill(pl: Dictionary) -> void:
-	while pl["rack"].size() < ruleset.rack_size and bag.size() > 0:
-		pl["rack"].append(bag.pop_back())
+func _adopt_match_state() -> void:
+	board = match_state.board
+	bag = match_state.bag
+	players = match_state.players
+	pending = match_state.pending
+	current = match_state.current_player
+	passes_in_a_row = match_state.passes_in_a_row
+	revealed = match_state.revealed
+	game_over = match_state.game_over
+
+
+func _sync_match_state_from_aliases() -> void:
+	if match_state == null:
+		return
+	match_state.board = board
+	match_state.bag = bag
+	match_state.players = players
+	match_state.pending = pending
+	match_state.current_player = current
+	match_state.passes_in_a_row = passes_in_a_row
+	match_state.revealed = revealed
+	match_state.game_over = game_over
 
 
 func _on_rack_pressed(i: int) -> void:
@@ -586,11 +597,7 @@ func _on_cell_pressed(pos: Vector2i) -> void:
 	if game_over or players[current].get("is_ai", false):
 		return
 	if pending.has(pos):
-		var ptile: Dictionary = pending[pos]["tile"]
-		pending.erase(pos)
-		players[current]["rack"].append(ptile)
-		selected_rack = -1
-		refresh_all()
+		recall_tile(pos)
 		return
 	if board.tile_at(pos) != null:
 		return
@@ -606,9 +613,14 @@ func _on_cell_pressed(pos: Vector2i) -> void:
 
 
 func _place_selected(pos: Vector2i, tile: Dictionary) -> void:
-	var rack: Array = players[current]["rack"]
-	rack.remove_at(selected_rack)
-	pending[pos] = {"pos": pos, "tile": tile}
+	var payload := {
+		"rack_index": selected_rack,
+		"position": {"x": pos.x, "y": pos.y},
+		"blank_letter": str(tile.get("chosen_blank_letter", "")),
+	}
+	var events := _apply_local_command(MatchEngine.COMMAND_PLACE, payload)
+	if not _command_rejection(events).is_empty():
+		return
 	selected_rack = -1
 	refresh_all()
 
@@ -656,19 +668,19 @@ func handle_drop(pos: Vector2i, data: Variant) -> void:
 			var src := Vector2i(data["pos"])
 			if not pending.has(src) or pending.has(pos):
 				return
-			var item: Dictionary = pending[src]
-			pending.erase(src)
-			item["pos"] = pos
-			pending[pos] = item
-			refresh_all()
+			var events := _apply_local_command(MatchEngine.COMMAND_MOVE_PENDING, {
+				"source": {"x": src.x, "y": src.y},
+				"destination": {"x": pos.x, "y": pos.y},
+			})
+			if _command_rejection(events).is_empty():
+				refresh_all()
 
 
 func _on_blank_chosen(ch: String) -> void:
 	blank_popup.hide()
 	if blank_target.x < 0 or selected_rack < 0:
 		return
-	var tile: Dictionary = players[current]["rack"][selected_rack]
-	tile["letter"] = ch
+	var tile: Dictionary = players[current]["rack"][selected_rack].duplicate(true)
 	tile["chosen_blank_letter"] = ch
 	_place_selected(blank_target, tile)
 	blank_target = Vector2i(-1, -1)
@@ -677,8 +689,8 @@ func _on_blank_chosen(ch: String) -> void:
 func _on_recall() -> void:
 	if players[current].get("is_ai", false):
 		return
-	for pos in pending.keys():
-		recall_tile(pos)
+	if not pending.is_empty():
+		_apply_local_command(MatchEngine.COMMAND_RECALL_ALL, {})
 	selected_rack = -1
 	refresh_all()
 
@@ -686,13 +698,9 @@ func _on_recall() -> void:
 func recall_tile(pos: Vector2i) -> void:
 	if not pending.has(pos):
 		return
-	var item: Dictionary = pending[pos]
-	var t: Dictionary = item["tile"]
-	if t["blank"]:
-		t["letter"] = ""
-		t.erase("chosen_blank_letter")
-	pending.erase(pos)
-	players[current]["rack"].append(t)
+	var events := _apply_local_command(MatchEngine.COMMAND_RECALL, {"position": {"x": pos.x, "y": pos.y}})
+	if not _command_rejection(events).is_empty():
+		return
 	selected_rack = -1
 	refresh_all()
 
@@ -700,7 +708,9 @@ func recall_tile(pos: Vector2i) -> void:
 func _on_shuffle() -> void:
 	if players[current].get("is_ai", false):
 		return
-	players[current]["rack"].shuffle()
+	var events := _apply_local_command(MatchEngine.COMMAND_SHUFFLE_RACK, {})
+	if not _command_rejection(events).is_empty():
+		return
 	selected_rack = -1
 	refresh_rack()
 
@@ -711,9 +721,9 @@ func reorder_rack(from_i: int, to_i: int) -> void:
 	var rack: Array = players[current]["rack"]
 	if from_i < 0 or to_i < 0 or from_i >= rack.size() or to_i >= rack.size() or from_i == to_i:
 		return
-	var t = rack[from_i]
-	rack.remove_at(from_i)
-	rack.insert(to_i, t)
+	var events := _apply_local_command(MatchEngine.COMMAND_REORDER_RACK, {"from_index": from_i, "to_index": to_i})
+	if not _command_rejection(events).is_empty():
+		return
 	selected_rack = -1
 	refresh_rack()
 
@@ -728,45 +738,33 @@ func _pending_array() -> Array:
 func _on_play() -> void:
 	if game_over or players[current].get("is_ai", false):
 		return
-	var res := MoveLogic.validate(board, _pending_array(), ruleset, lexicon)
-	if not res["ok"]:
-		_log(res["error"])
+	_commit_move({})
+
+
+func _commit_move(_legacy_validation: Dictionary) -> void:
+	var actor_name := str(players[current]["name"])
+	var events := _apply_local_command(MatchEngine.COMMAND_COMMIT, {})
+	var rejection := _command_rejection(events)
+	if not rejection.is_empty():
+		_log(rejection)
 		return
-	_commit_move(res)
-
-
-func _commit_move(res: Dictionary) -> void:
-	var pl: Dictionary = players[current]
-	var word_names := []
-	for w in res["words"]:
-		word_names.append(w["word"])
+	var committed: MatchEvent = events[0]
+	var word_names: Array = committed.payload.get("words", [])
 	var placed_positions: Array = []
-	for pos in pending:
-		board.place(pos, pending[pos]["tile"])
-		placed_positions.append(pos)
-	pending.clear()
-	if ruleset.fog_of_war:
-		for p0 in placed_positions:
-			for dy in range(-ruleset.fog_radius, ruleset.fog_radius + 1):
-				for dx in range(-ruleset.fog_radius, ruleset.fog_radius + 1):
-					var rp: Vector2i = Vector2i(p0) + Vector2i(dx, dy)
-					if board.in_bounds(rp):
-						revealed[rp] = true
+	for item in committed.payload.get("positions", []):
+		placed_positions.append(Vector2i(int(item.get("x", -1)), int(item.get("y", -1))))
 	selected_rack = -1
-	_refill(pl)
-	pl["score"] += res["score"]
-	passes_in_a_row = 0
-	var who: String = pl["name"]
-	_log("%s cast '%s' for %d point%s!" % [who, " ".join(word_names), res["score"], "" if res["score"] == 1 else "s"])
-	for bh in res.get("bonus_hits", []):
+	var score := int(committed.payload.get("score", 0))
+	_log("%s cast '%s' for %d point%s!" % [actor_name, " ".join(word_names), score, "" if score == 1 else "s"])
+	for bh in committed.payload.get("bonus_hits", []):
 		var bws: Array = bh["words"]
 		_log("%s - '%s' resonate%s (+%d)!" % [bh["label"], " ".join(bws), "s" if bws.size() > 1 else "", int(bws.size()) * int(bh["points"])])
-	_append_move_log(pl, placed_positions, word_names, int(res["score"]))
-	_check_end()
+	var actor: Dictionary = players[int(committed.payload.get("player_index", 0))]
+	_append_move_log(actor, placed_positions, word_names, score)
 	if game_over:
+		_log_match_result()
 		refresh_all()
 		return
-	current = (current + 1) % players.size()
 	refresh_all()
 	if players[current].get("is_ai", false):
 		_run_ai_turn()
@@ -805,42 +803,45 @@ func _run_ai_turn() -> void:
 	var lex_for_ai := lexicon if ai_difficulty == "archmage" else _get_ai_lexicon()
 	var move: Variant = AiPlayer.choose_move(board, pl["rack"], ruleset, lex_for_ai, ai_difficulty)
 	if move.is_empty():
-		if bag.size() > 0 and pl["rack"].size() < ruleset.rack_size:
-			_log("%s exchanges runes and passes." % pl["name"])
-			for t in pl["rack"]:
-				bag.push_front(t)
-			pl["rack"].clear()
-			_refill(pl)
-		else:
-			_log("%s cannot find a spell and passes." % pl["name"])
-			passes_in_a_row += 1
-			if passes_in_a_row >= players.size() * 3:
-				_end_game()
-				refresh_all()
-				return
-		current = (current + 1) % players.size()
+		var actor_name := str(pl["name"])
+		var pass_events := _apply_local_command(MatchEngine.COMMAND_PASS, {})
+		if _command_rejection(pass_events).is_empty():
+			_log("%s cannot find a spell and passes." % actor_name)
+			if game_over:
+				_log_match_result()
 		refresh_all()
-		if players[current].get("is_ai", false):
+		if not game_over and players[current].get("is_ai", false):
 			_run_ai_turn()
 		return
 	var res := MoveLogic.validate(board, move, ruleset, lexicon)
 	if res["ok"]:
-		var rack: Array = pl["rack"]
 		for item in move:
-			var t: Dictionary = item["tile"]
-			for i in range(rack.size()):
-				var r: Dictionary = rack[i]
-				if bool(r["blank"]) == bool(t["blank"]) and (bool(t["blank"]) or r["letter"] == t["letter"]):
-					rack.remove_at(i)
+			var move_tile: Dictionary = item["tile"]
+			var rack: Array = players[current]["rack"]
+			var rack_index := -1
+			for index in range(rack.size()):
+				var rack_tile: Dictionary = rack[index]
+				if bool(rack_tile["blank"]) == bool(move_tile["blank"]) and (bool(move_tile["blank"]) or rack_tile["letter"] == move_tile["letter"]):
+					rack_index = index
 					break
-			pending[item["pos"]] = {"pos": item["pos"], "tile": t}
+			if rack_index < 0:
+				_log("%s fumbled a spell (rune missing) and passes." % pl["name"])
+				_apply_local_command(MatchEngine.COMMAND_RECALL_ALL, {})
+				_apply_local_command(MatchEngine.COMMAND_PASS, {})
+				refresh_all()
+				return
+			var position: Vector2i = item["pos"]
+			_apply_local_command(MatchEngine.COMMAND_PLACE, {
+				"rack_index": rack_index,
+				"position": {"x": position.x, "y": position.y},
+				"blank_letter": str(move_tile["letter"]) if bool(move_tile["blank"]) else "",
+			})
 		_commit_move(res)
 	else:
 		_log("%s fumbled a spell (%s) and passes." % [pl["name"], res["error"]])
-		passes_in_a_row += 1
-		current = (current + 1) % players.size()
+		_apply_local_command(MatchEngine.COMMAND_PASS, {})
 		refresh_all()
-		if players[current].get("is_ai", false):
+		if not game_over and players[current].get("is_ai", false):
 			_run_ai_turn()
 
 
@@ -869,26 +870,22 @@ func _confirm_trade() -> void:
 	trade_popup.hide()
 	if game_over or players[current].get("is_ai", false) or trade_selection.is_empty():
 		return
-	if bag.size() < trade_selection.size():
-		_log("Too few runes remain in the bag to trade.")
-		return
-	var rack: Array = players[current]["rack"]
 	var indices: Array = trade_selection.keys()
 	indices.sort()
+	_sync_match_state_from_aliases()
+	var actor_name := str(players[current]["name"])
+	var command := MatchCommand.create(MatchEngine.COMMAND_TRADE, {"indices": indices}, current, match_state.sequence, "local-trade-%d" % match_state.sequence)
+	var events := MatchEngine.apply_command(match_state, command, ruleset)
+	var rejection := _command_rejection(events)
+	if not rejection.is_empty():
+		if rejection == "insufficient_bag_tiles":
+			_log("Too few runes remain in the bag to trade.")
+		else:
+			_log("The rune trade was rejected: %s." % rejection.replace("_", " "))
+		return
 	trade_selection.clear()
-	var removed: Array = []
-	for i in range(indices.size() - 1, -1, -1):
-		var ri: int = indices[i]
-		if ri >= 0 and ri < rack.size():
-			removed.append(rack[ri])
-			rack.remove_at(ri)
-	for t in removed:
-		bag.push_front(t)
-	bag.shuffle()
-	_refill(players[current])
-	passes_in_a_row += 1
-	_log("%s trades %d rune%s back to the sigil." % [players[current]["name"], removed.size(), "" if removed.size() == 1 else "s"])
-	current = (current + 1) % players.size()
+	_adopt_match_state()
+	_log("%s trades %d rune%s back to the sigil." % [actor_name, indices.size(), "" if indices.size() == 1 else "s"])
 	refresh_all()
 	if players[current].get("is_ai", false):
 		_run_ai_turn()
@@ -899,37 +896,47 @@ func _on_pass() -> void:
 		return
 	if not pending.is_empty():
 		_on_recall()
-	passes_in_a_row += 1
-	_log("%s passes. The air crackles..." % players[current]["name"])
-	if passes_in_a_row >= players.size() * 3:
-		_end_game()
+	_sync_match_state_from_aliases()
+	var actor_name := str(players[current]["name"])
+	var command := MatchCommand.create(MatchEngine.COMMAND_PASS, {}, current, match_state.sequence, "local-pass-%d" % match_state.sequence)
+	var events := MatchEngine.apply_command(match_state, command, ruleset)
+	var rejection := _command_rejection(events)
+	if not rejection.is_empty():
+		_log("The pass was rejected: %s." % rejection.replace("_", " "))
+		return
+	_adopt_match_state()
+	_log("%s passes. The air crackles..." % actor_name)
+	if game_over:
+		_log_match_result()
 		refresh_all()
 		return
-	current = (current + 1) % players.size()
 	refresh_all()
 	if players[current].get("is_ai", false):
 		_run_ai_turn()
 
 
-func _check_end() -> void:
-	for pl in players:
-		if pl["rack"].is_empty() and bag.is_empty():
-			_end_game()
-			return
+func _apply_local_command(command_type: String, payload: Dictionary) -> Array[MatchEvent]:
+	_sync_match_state_from_aliases()
+	var command_payload := payload.duplicate(true)
+	var key := "local-%s-%d" % [command_type, match_state.sequence]
+	var command := MatchCommand.create(command_type, command_payload, current, match_state.sequence, key)
+	var events := MatchEngine.apply_command(match_state, command, ruleset, lexicon)
+	if _command_rejection(events).is_empty():
+		_adopt_match_state()
+	return events
 
 
-func _end_game() -> void:
-	MoveLogic.final_adjustment(players, ruleset)
-	game_over = true
-	var best_score := -999999
-	var winners := []
-	for pl in players:
-		if pl["score"] > best_score:
-			best_score = pl["score"]
-			winners = [pl["name"]]
-		elif pl["score"] == best_score:
-			winners.append(pl["name"])
-	_log("The duel ends! Victor: %s with %d points." % [" & ".join(winners), best_score])
+func _command_rejection(events: Array[MatchEvent]) -> String:
+	if events.is_empty() or events[0].type != "command_rejected":
+		return ""
+	return str(events[0].payload.get("reason", "unknown"))
+
+
+func _log_match_result() -> void:
+	if match_state == null or match_state.result.is_empty():
+		return
+	var winners: Array = match_state.result.get("winners", [])
+	_log("The duel ends! Victor: %s with %d points." % [" & ".join(winners), int(match_state.result.get("score", 0))])
 
 
 func _back_to_setup() -> void:
