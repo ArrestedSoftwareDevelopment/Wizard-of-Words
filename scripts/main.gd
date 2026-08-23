@@ -8,6 +8,7 @@ const COLOR_TILE := Color("5a3fa0")
 const COLOR_TILE_SEL := Color("8a6fd0")
 const COLOR_TILE_PEND := Color("d9a13a")
 const GRID_GAP := 2
+const EMPTY_BOARD_OPACITY := 0.70
 const BOARD_SHELL_SCENE := preload("res://scenes/components/board_shell.tscn")
 const TITLE_SCREEN_SCENE := preload("res://scenes/screens/title_screen.tscn")
 const SETUP_SCREEN_SCENE := preload("res://scenes/screens/setup_screen.tscn")
@@ -345,23 +346,25 @@ func _transition_to_game() -> void:
 	_game_transitioning = false
 
 
-func _apply_tile_look(b: Button, label: String, value: int, base: Color, letter_size := 22) -> void:
+func _apply_tile_look(b: Button, label: String, value: int, base: Color, letter_size := 22, opacity := 1.0) -> void:
 	letter_size = mini(letter_size, maxi(10, int(b.custom_minimum_size.x * 0.64)))
 	for c in b.get_children():
 		b.remove_child(c)
 		c.queue_free()
+	var styled_base := base
+	styled_base.a *= opacity
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = base
+	sb.bg_color = styled_base
 	sb.set_corner_radius_all(6)
 	sb.set_content_margin_all(2.0)
 	sb.border_width_bottom = 3
-	sb.border_color = base.darkened(0.35)
+	sb.border_color = styled_base.darkened(0.35)
 	b.add_theme_stylebox_override("normal", sb)
 	var hov: StyleBoxFlat = sb.duplicate()
-	hov.bg_color = base.lightened(0.15)
+	hov.bg_color = styled_base.lightened(0.15)
 	b.add_theme_stylebox_override("hover", hov)
 	var prs: StyleBoxFlat = sb.duplicate()
-	prs.bg_color = base.darkened(0.15)
+	prs.bg_color = styled_base.darkened(0.15)
 	b.add_theme_stylebox_override("pressed", prs)
 	b.text = ""
 	var main := Label.new()
@@ -465,7 +468,7 @@ func _apply_prem_style(b: Button, pos: Vector2i) -> void:
 		_add_skin_texture(b)
 		return
 	if ruleset.fog_of_war and not revealed.has(pos):
-		_apply_tile_look(b, "", 0, ruleset.legend["."]["color"])
+		_apply_tile_look(b, "", 0, ruleset.legend["."]["color"], 22, EMPTY_BOARD_OPACITY)
 		b.tooltip_text = ""
 		return
 	var prem: Dictionary = ruleset.premium_at(pos)
@@ -474,8 +477,8 @@ func _apply_prem_style(b: Button, pos: Vector2i) -> void:
 	var glyph_atlas := str(active_theme.get("premium_glyph_atlas", ""))
 	if label != "":
 		tooltip = String(prem["name"])
-	_apply_tile_look(b, "" if glyph_atlas != "" else label, 0, col, 20)
-	_add_skin_texture(b)
+	_apply_tile_look(b, "" if glyph_atlas != "" else label, 0, col, 20, 0.0)
+	_add_skin_texture(b, EMPTY_BOARD_OPACITY)
 	if label != "":
 		var kind := "WORD" if String(prem["type"]) == "word" else "RUNE"
 		var short_name := String(prem["name"]).split("(")[0].strip_edges().to_upper()
@@ -497,7 +500,7 @@ func _apply_prem_style(b: Button, pos: Vector2i) -> void:
 	b.tooltip_text = tooltip
 
 
-func _add_skin_texture(b: Button) -> void:
+func _add_skin_texture(b: Button, opacity := 1.0) -> void:
 	var tex: Texture2D = _load_texture_any(String(ruleset.skin.get("tiles", "")))
 	if tex == null:
 		return
@@ -509,6 +512,7 @@ func _add_skin_texture(b: Button) -> void:
 	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var tile_modulate := Color(str(active_theme.get("tile_modulate", "#ffffff")))
 	tr.self_modulate = tile_modulate.darkened(randf_range(0.0, 0.06))
+	tr.self_modulate.a *= opacity
 	b.add_child(tr)
 	b.move_child(tr, 0)
 

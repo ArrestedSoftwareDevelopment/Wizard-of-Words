@@ -94,6 +94,7 @@ func _apply_board_background(path: String, skin: Dictionary) -> void:
 		return
 	var fallback := StyleBoxFlat.new()
 	fallback.bg_color = Color(str(skin.get("board_color", "#1c1430")))
+	fallback.bg_color.a = 0.0
 	fallback.border_color = Color(str(skin.get("board_border_color", "#b58b42")))
 	fallback.set_border_width_all(2)
 	fallback.set_corner_radius_all(6)

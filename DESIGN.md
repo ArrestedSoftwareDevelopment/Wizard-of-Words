@@ -96,6 +96,8 @@ Starting a match now presents the selected backdrop as a cinematic title card be
 
 Premium squares now use theme-owned five-glyph atlases rather than shared Unicode symbols. Only atlas positions are common; every theme is free to use entirely different objects and silhouettes for double letter, triple letter, center, double word, and triple word. Hover text remains the authoritative accessible description of each multiplier. Generated atlases use a uniform pale production matte removed at render time, because the image generator did not provide genuine alpha even when requested.
 
+Empty board cells render at 70% opacity over a transparent board backing, allowing roughly 30% of the environmental backdrop to show through. Premium glyphs, placed letters, pending letters, rack tiles, and all interaction text remain fully opaque.
+
 All seven themes now have curated bonus lexicons. Prairie Homestead adds 60 frontier, homecraft, and handwork terms (+20); Velvet & Leather adds 58 consensual-adult kink and luxury-material terms (+25). Every entry in both sets is covered by the bundled base dictionaries, and asset tests enforce a nonempty, uppercase, duplicate-free theme lexicon.
 
 Every production theme should provide a backdrop, blank tile face, rack/shelf, palette, and optional premium-cell ornament set. The full-screen backdrop is the primary decorative frame; the playable grid should use only a restrained bevel, rim light, or shadow so the board can scale freely without visual overload. Separate ornate board-frame artwork is optional, not a required theme asset. Source prompts and generation records live in `data/graphics/PROMPTS.md`.

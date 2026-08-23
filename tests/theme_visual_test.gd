@@ -50,6 +50,22 @@ func _run() -> void:
 		var center: Button = main.board_shell.board_view.cell_buttons[Vector2i(main.ruleset.board_size / 2, main.ruleset.board_size / 2)]
 		if center.find_children("*", "PremiumGlyph", true, false).is_empty():
 			failures.append("%s premium glyph atlas was not applied" % theme_id)
+		var empty_cell: Button = main.board_shell.board_view.cell_buttons[Vector2i(1, 0)]
+		var empty_textures := empty_cell.find_children("*", "TextureRect", true, false)
+		if empty_textures.is_empty() or not is_equal_approx(empty_textures[0].self_modulate.a, main.EMPTY_BOARD_OPACITY):
+			failures.append("%s empty board cells are not translucent" % theme_id)
+		var hover_style = empty_cell.get_theme_stylebox("hover")
+		if hover_style is StyleBoxFlat and not is_equal_approx(hover_style.bg_color.a, 0.0):
+			failures.append("%s empty board hover becomes opaque" % theme_id)
+		var solid_probe := Vector2i(1, 0)
+		main.board.place(solid_probe, {"letter": "A", "value": 1, "blank": false})
+		main.refresh_board()
+		var placed_cell: Button = main.board_shell.board_view.cell_buttons[solid_probe]
+		var placed_textures := placed_cell.find_children("*", "TextureRect", true, false)
+		if placed_textures.is_empty() or not is_equal_approx(placed_textures[0].self_modulate.a, 1.0):
+			failures.append("%s placed letter tiles are not opaque" % theme_id)
+		main.board.remove(solid_probe)
+		main.refresh_board()
 		if not _capture("res://.godot/theme-%s.png" % theme_id):
 			failures.append("%s screenshot failed" % theme_id)
 
