@@ -1,0 +1,51 @@
+{
+	"name": "Arcane Codex",
+	"board_size": 15,
+	"rack_size": 8,
+	"bingo_bonus": 75,
+	"end_penalty": true,
+	"blank_count": 3,
+	"skin": {
+		"tiles": "res://data/graphics/raw tiles/Single Wizard Tile.png",
+		"background": "res://data/graphics/backgrounds/Parchment Background.png"
+	},
+	"layout": [
+		"T..t...T...t..T",
+		".D..d..D..d..D.",
+		"..d..d...d..d..",
+		"d..d..D.D..d..d",
+		"..d....d....d..",
+		".D...t...t...D.",
+		"..t..d...d..t..",
+		"T..t...*...t..T",
+		"..t..d...d..t..",
+		".D...t...t...D.",
+		"..d....d....d..",
+		"d..d..D.D..d..d",
+		"..d..d...d..d..",
+		".D..d..D..d..D.",
+		"T..t...T...t..T"
+	],
+	"legend": {
+		"D": { "name": "Mana Font (x2 word)", "type": "word", "mult": 2, "color": "#7a4fd0" },
+		"T": { "name": "Ley Line (x3 word)", "type": "word", "mult": 3, "color": "#c93a8a" },
+		"d": { "name": "Enchanted Rune (x2 letter)", "type": "letter", "mult": 2, "color": "#3aa8c9" },
+		"t": { "name": "Arch Rune (x3 letter)", "type": "letter", "mult": 3, "color": "#2f6f96" },
+		"*": { "name": "Wizard's Star", "type": "word", "mult": 2, "color": "#e8b23a" }
+	},
+	"letters": {
+		"A": { "count": 10, "value": 1 }, "B": { "count": 3, "value": 3 },
+		"C": { "count": 3, "value": 3 },  "D": { "count": 4, "value": 2 },
+		"E": { "count": 13, "value": 1 }, "F": { "count": 2, "value": 4 },
+		"G": { "count": 3, "value": 2 },  "H": { "count": 3, "value": 4 },
+		"I": { "count": 9, "value": 1 },  "J": { "count": 1, "value": 8 },
+		"K": { "count": 1, "value": 5 },  "L": { "count": 5, "value": 1 },
+		"M": { "count": 3, "value": 3 },  "N": { "count": 6, "value": 1 },
+		"O": { "count": 8, "value": 1 },  "P": { "count": 3, "value": 3 },
+		"Q": { "count": 1, "value": 10 }, "R": { "count": 7, "value": 1 },
+		"S": { "count": 5, "value": 1 },  "T": { "count": 6, "value": 1 },
+		"U": { "count": 4, "value": 1 },  "V": { "count": 2, "value": 4 },
+		"W": { "count": 2, "value": 4 },  "X": { "count": 1, "value": 8 },
+		"Y": { "count": 2, "value": 4 },  "Z": { "count": 1, "value": 12 }
+	}
+}

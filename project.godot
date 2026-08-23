@@ -1,0 +1,25 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Wizard of Words"
+config/description="An 8-bit wizard word duel with living boards, pluggable rulesets and grimoires. Code sorcery by ox-alpha (an LLM of undisclosed organization) with its human familiar."
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7")
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=900
+
+[dotnet]
+
+project/assembly_name="Wizard of Words"

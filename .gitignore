@@ -1,0 +1,21 @@
+# Godot-generated project data
+.godot/
+.mono/
+
+# Local builds and exports
+builds/
+exports/
+
+# Upstream/source archives are not runtime assets; some font archives are
+# intentionally excluded pending license verification in LICENSES.md.
+data/**/*.zip
+
+# Crash and diagnostic output
+mono_crash.*.json
+crash-*.txt
+
+# Operating system and editor clutter
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

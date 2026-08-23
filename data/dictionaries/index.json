@@ -1,0 +1,72 @@
+{
+	"enable1.txt": {
+		"title": "ENABLE (172k words)",
+		"description": "Huge, permissive public-domain list. Pros: almost anything reasonable plays. Cons: includes obscure junk; little curation."
+	},
+	"tournament_american.txt": {
+		"title": "Tournament American (24k words)",
+		"description": "Curated 6of12 list. Pros: clean everyday vocabulary. Cons: misses many inflections; includes some 2-letter jargon unless strict mode is on."
+	},
+	"extended_american.txt": {
+		"title": "Extended American (75k words)",
+		"description": "2of12inf with inflections. Pros: balanced size and coverage. Cons: middle-ground curation."
+	},
+	"international_game.txt": {
+		"title": "International Game (61k words)",
+		"description": "Collins-style game word list. Pros: world-tournament feel. Cons: accepts some words American players will contest."
+	},
+	"arcane_lexicon.txt": {
+		"title": "Arcane Lexicon (145 words)",
+		"description": "Bonus word file: fantasy flavor words. Playing them triggers an Arcane Surge (+25 each). Pros: thematic spice when merged. Cons: far too small alone.",
+		"bonus_points": 25,
+		"bonus_flavor": "The ley lines hum"
+	},
+	"common_english.txt": {
+		"title": "Common English (2.1k words)",
+		"description": "Casual/family mode: small everyday vocabulary, playable entirely on its own for relaxed games. Foundation of the two-letter whitelist. Off by default - enable alongside big grimoires only for flavor.",
+		"default_checked": false
+	},
+	"acronyms.txt": {
+		"title": "Acronyms & Initialisms",
+		"description": "Opt-in modern abbreviations (NASA, GIF, YOLO). Pros: fun wildcard vocabulary. Cons: purists will object; enable per game mode as desired."
+	},
+	"pirate_pillage.txt": {
+		"title": "Pirate Pillage (55 words)",
+		"description": "Bonus file: swashbuckling vocabulary. Playing these words triggers a surge (+25 each). Yo ho.",
+		"default_checked": false,
+		"bonus_points": 25,
+		"bonus_flavor": "The Jolly Roger rises"
+	},
+	"medieval_might.txt": {
+		"title": "Medieval Might (50 words)",
+		"description": "Bonus file: knights, sieges and heraldry. Playing these words triggers a surge (+25 each).",
+		"default_checked": false,
+		"bonus_points": 25,
+		"bonus_flavor": "Heralds trumpet"
+	},
+	"gothic_grimoire.txt": {
+		"title": "Gothic Grimoire (47 words)",
+		"description": "Bonus file: haunted horror vocabulary. Playing these words triggers a surge (+30 each). Best played by candlelight.",
+		"default_checked": false,
+		"bonus_points": 30,
+		"bonus_flavor": "Bells toll in the dark"
+	},
+	"cosmic_canticle.txt": {
+		"title": "Cosmic Canticle (31 words)",
+		"description": "Bonus file: starfaring vocabulary. Rarer words, richer reward (+40 each).",
+		"default_checked": false,
+		"bonus_points": 40,
+		"bonus_flavor": "The void whispers"
+	},
+	"kitchen_witchery.txt": {
+		"title": "Kitchen Witchery (31 words)",
+		"description": "Bonus file: hearth-craft and cookery. Gentle surges (+15 each). Cozy mode.",
+		"default_checked": false,
+		"bonus_points": 15,
+		"bonus_flavor": "The cauldron bubbles"
+	},
+	"two_letter_whitelist.txt": {
+		"title": "Two-Letter Whitelist",
+		"description": "Trusted two-letter words used by the 'strict two-letter' ruleset toggle. Not playable on its own."
+	}
+}
