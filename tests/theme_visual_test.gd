@@ -47,6 +47,9 @@ func _run() -> void:
 			failures.append("%s unexpectedly shows a legacy frame" % theme_id)
 		if main.board_shell.board_view.cell_buttons.size() != main.ruleset.board_size * main.ruleset.board_size:
 			failures.append("%s board grid is incomplete" % theme_id)
+		var center: Button = main.board_shell.board_view.cell_buttons[Vector2i(main.ruleset.board_size / 2, main.ruleset.board_size / 2)]
+		if center.find_children("*", "PremiumGlyph", true, false).is_empty():
+			failures.append("%s premium glyph atlas was not applied" % theme_id)
 		if not _capture("res://.godot/theme-%s.png" % theme_id):
 			failures.append("%s screenshot failed" % theme_id)
 

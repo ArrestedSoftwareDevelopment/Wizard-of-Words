@@ -471,9 +471,10 @@ func _apply_prem_style(b: Button, pos: Vector2i) -> void:
 	var prem: Dictionary = ruleset.premium_at(pos)
 	var col: Color = prem["color"]
 	var label := String(prem.get("glyph", ""))
+	var glyph_atlas := str(active_theme.get("premium_glyph_atlas", ""))
 	if label != "":
 		tooltip = String(prem["name"])
-	_apply_tile_look(b, label, 0, col, 20)
+	_apply_tile_look(b, "" if glyph_atlas != "" else label, 0, col, 20)
 	_add_skin_texture(b)
 	if label != "":
 		var kind := "WORD" if String(prem["type"]) == "word" else "RUNE"
@@ -485,6 +486,13 @@ func _apply_prem_style(b: Button, pos: Vector2i) -> void:
 			shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			b.add_child(shade)
 			b.move_child(shade, 1)
+		if glyph_atlas != "":
+			var premium_key := String(ruleset.layout[pos.y])[pos.x]
+			var glyph := PremiumGlyph.new()
+			if glyph.configure(glyph_atlas, premium_key):
+				b.add_child(glyph)
+			else:
+				glyph.queue_free()
 		_attach_hover_reveal(b, "%s\n%d × %s" % [short_name, int(prem["mult"]), kind], 9)
 	b.tooltip_text = tooltip
 

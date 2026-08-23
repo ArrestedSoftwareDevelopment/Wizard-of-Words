@@ -24,6 +24,11 @@ func _initialize() -> void:
 		_check_texture(str(theme.get("backdrop", "")), "%s backdrop" % theme_id, failures)
 		_check_texture(str(theme.get("tile", "")), "%s tile" % theme_id, failures)
 		_check_font(str(theme.get("title_font", "")), "%s title font" % theme_id, failures)
+		var glyph_atlas := str(theme.get("premium_glyph_atlas", ""))
+		if glyph_atlas == "":
+			failures.append("%s has no premium glyph atlas" % theme_id)
+		else:
+			_check_glyph_atlas(glyph_atlas, theme_id, failures)
 		var bonus_file := str(theme.get("bonus_lexicon", ""))
 		if bonus_file == "":
 			failures.append("%s has no bonus lexicon" % theme_id)
@@ -108,3 +113,14 @@ func _check_font(path: String, label: String, failures: Array) -> void:
 	var font := FontFile.new()
 	if font.load_dynamic_font(path) != OK:
 		failures.append("%s is not a loadable font: %s" % [label, path])
+
+
+func _check_glyph_atlas(path: String, theme_id: String, failures: Array) -> void:
+	_check_texture(path, "%s premium glyph atlas" % theme_id, failures)
+	var texture = load(path)
+	if not texture is Texture2D:
+		return
+	if texture.get_width() % 3 != 0 or texture.get_height() % 2 != 0:
+		failures.append("%s glyph atlas is not divisible into a 3x2 grid" % theme_id)
+	if texture.get_width() < 768 or texture.get_height() < 512:
+		failures.append("%s glyph atlas is too small" % theme_id)

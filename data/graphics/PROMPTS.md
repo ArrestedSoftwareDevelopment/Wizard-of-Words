@@ -72,6 +72,12 @@ Generated backdrops:
 - `backgrounds/generated/arcane_codex/Arcane Codex Backdrop v1-dark.png` - OpenArt history `JQykjlQwXwRMIAt9Jk5W`, GPT Image 2 text-to-image, 2304x1296 PNG.
 - `backgrounds/generated/arcane_codex/Arcane Codex Backdrop v2-bright.png` - OpenArt history `9tEFfkqQ1EU8V3FHFXIA`, GPT Image 2 image-to-image lighting revision, 2304x1296 PNG. Current integration candidate.
 
+Generated premium glyphs:
+
+- `glyphs/generated/wizardry/Wizardry Glyph Atlas v1.png` - Codex built-in image generation, 1536x1024 opaque PNG arranged as a strict 3x2 atlas: double letter, triple letter, center, double word, triple word, empty. Antique brass, amethyst and celestial geometry. The generator twice represented transparency as a baked pale checkerboard; runtime neutral-background extraction is therefore applied by `shaders/glyph_alpha.gdshader` and must be checked at final cell size.
+
+Final glyph prompt summary: five coordinated Wizardry premium-square emblems in a strict 3x2 atlas with the sixth cell empty; circular double/triple letter seals with two/three amethyst accents; eight-point center star; diamond double/triple word crests with two crescent or three sun accents; engraved antique brass and restrained amethyst; broad 48-pixel-readable silhouettes; no text, numbers, tiles, panels or extra symbols. The extraction revision requested that only the checkerboard be removed while preserving the five emblems and atlas layout.
+
 ### Gothic Horror
 
 Elegant haunted Victorian library and crypt materials: charcoal stone, blackened carved oak, tarnished silver, dried crimson roses, smoky candlelight and cool moonlight. Frightening but refined; no gore, monsters, bodies, or faces.
@@ -155,3 +161,16 @@ Generated tiles:
 Final tile prompt summary: seamless edge-to-edge blank Velvet & Leather letter tile; oxblood velvet inset, matte black leather, restrained aged-brass frame and four studs; exact front orthographic view; open candlelit midtones; opaque full-canvas texture; no surrounding background, checkerboard, text, bodies, explicit objects, or multiple tiles.
 
 Final prompt summary: full-screen premium painterly consensual-adult kink-inspired private salon; oxblood velvet, matte black leather, mahogany, brass rings and buckles, decorative ropework, chains, candles and smoked mirrors; bright open center; no board, tiles, UI, text, people, anatomy, activity, violence, or explicit objects.
+
+## Premium Glyph Atlas Pass
+
+All final atlases were produced with Codex built-in image generation at 1536x1024. They use a strict 3x2 placement grid (`d`, `t`, `*` / `D`, `T`, empty) solely for runtime slicing. The objects and silhouettes are intentionally unconstrained between themes. The requested transparency was not genuine, so final production prompts use a uniform white matte removed by the runtime glyph shader.
+
+- `glyphs/generated/gothic_horror/Gothic Horror Glyph Atlas v2.png` - crossed raven feathers, three-candle candelabrum, cathedral rose window, paired moonlit lancets, and thorned three-drop reliquary. Accepted. An earlier matching-medallion draft was rejected.
+- `glyphs/generated/pirate/Pirate Glyph Atlas v2.png` - crossed marlinspikes, three-coin tricorn, captain's compass rose, paired charts with divider, and ship's wheel with three pennants. Accepted. An earlier matching-medallion draft was rejected.
+- `glyphs/generated/space_age/Space Age Glyph Atlas v1.png` - orbital gyroscope, triangular three-lens scanner, stellar reactor core, paired-planet hologram, and three-fin hyperspace beacon. Accepted for board validation.
+- `glyphs/generated/kitchen_witchery/Kitchen Witchery Glyph Atlas v1.png` - crossed spoons with rosemary, three-steam green kettle, copper flame rosette, paired herb measures, and three-flame hearth cauldron. Accepted for board validation.
+- `glyphs/generated/prairie_homestead/Prairie Homestead Glyph Atlas v1.png` - knitting needles and indigo yarn, wheat horseshoe, painted barn star, paired wheat sheaves, and stitched flying-geese quilt block. Accepted for board validation.
+- `glyphs/generated/velvet_leather/Velvet and Leather Glyph Atlas v1.png` - linked leather cuffs, three-strand silk knot, garnet starburst, paired roses, and three-ring leather lattice. Accepted for board validation; objects only, non-explicit.
+
+Final prompt pattern: five completely different theme-native artifacts, centered with equal padding in the five occupied cells of an exact 1536x1024 3x2 atlas; distinct silhouettes with no shared ornamental frames; broad and crisp at 48 pixels; flat uniform white production matte; no text, numbers, labels, people, tile faces, extra objects, checkerboard, or watermark. Each theme prompt specified the five objects and materials listed above.
