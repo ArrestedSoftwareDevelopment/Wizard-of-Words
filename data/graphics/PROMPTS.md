@@ -51,7 +51,7 @@ Visual themes are reusable skins and do not define gameplay. Classic Grimoire an
 | 4 | Space Age | `space_age` | Accepted and downloaded |
 | 5 | Kitchen Witchery | `kitchen_witchery` | Accepted and downloaded |
 | 6 | Prairie Homestead | `prairie_homestead` | Accepted and downloaded |
-| 7 | Velvet & Leather | `velvet_leather` | Next |
+| 7 | Velvet & Leather | `velvet_leather` | Accepted and downloaded |
 
 Backdrop-wide constraints: 16:9 at 2K, bright enough to retain shadow detail, with a broad quiet center and lower-center area for the board and HUD. Decoration belongs at the edges and corners. Backdrops contain no board, grid, tiles, rack, UI, text, people, or logos.
 
@@ -125,3 +125,9 @@ Final prompt summary: full-screen premium painterly 1870s frontier homestead; ho
 ### Velvet & Leather
 
 Tasteful consensual-adult BDSM-inspired luxury: black leather, oxblood velvet, quilted panels, brushed brass rings and buckles, candlelit shadows, elegant high-end boudoir craft. Non-explicit; no people, bodies, nudity, anatomy, sexual acts, text, or logos.
+
+Generated backdrops:
+
+- `backgrounds/generated/velvet_leather/Velvet and Leather Backdrop v1.png` - OpenArt history `ato1lIYir6WVefC4RS4a`, GPT Image 2 text-to-image, 2304x1296 PNG. Accepted.
+
+Final prompt summary: full-screen premium painterly consensual-adult kink-inspired private salon; oxblood velvet, matte black leather, mahogany, brass rings and buckles, decorative ropework, chains, candles and smoked mirrors; bright open center; no board, tiles, UI, text, people, anatomy, activity, violence, or explicit objects.
