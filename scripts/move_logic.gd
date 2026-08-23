@@ -55,8 +55,9 @@ static func validate(board: GameBoard, pending: Array, ruleset: WordRuleset, lex
 	var word_cells := _find_words(board, pend_map)
 	var playable: Array = []
 	for cells in word_cells:
-		if cells.size() >= ruleset.min_word_length:
-			playable.append(cells)
+		if cells.size() < ruleset.min_word_length:
+			return _err("Every spell formed must contain %d+ runes." % ruleset.min_word_length)
+		playable.append(cells)
 	if playable.is_empty():
 		return _err("A spell must form a word of %d+ runes." % ruleset.min_word_length)
 	var words: Array = []

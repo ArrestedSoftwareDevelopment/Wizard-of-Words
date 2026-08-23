@@ -1,0 +1,14 @@
+{
+	"Gothic Frame.png": {
+		"content_ratios": { "left": 0.22, "top": 0.225, "right": 0.22, "bottom": 0.22 }
+	},
+	"Ornate with runes.png": {
+		"content_ratios": { "left": 0.26, "top": 0.265, "right": 0.26, "bottom": 0.265 }
+	},
+	"Pirate Frame.png": {
+		"content_ratios": { "left": 0.16, "top": 0.18, "right": 0.16, "bottom": 0.19 }
+	},
+	"Space Age Frame1.png": {
+		"content_ratios": { "left": 0.295, "top": 0.305, "right": 0.305, "bottom": 0.30 }
+	}
+}

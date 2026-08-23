@@ -28,6 +28,8 @@ Tests are headless `SceneTree` scripts under `tests/`. Run them from the project
 
 ```text
 godot --headless --path . --script tests/smoke_test.gd
+godot --headless --path . --script tests/asset_test.gd
+godot --headless --path . --script tests/board_shell_test.gd
 godot --headless --path . --script tests/blank_test.gd
 godot --headless --path . --script tests/trade_test.gd
 godot --headless --path . --script tests/ui_test.gd

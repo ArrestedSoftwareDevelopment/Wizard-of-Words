@@ -103,38 +103,44 @@ Every committed command receives a monotonically increasing sequence number. `Ma
 
 The first extracted UI component should be `BoardShell`, because it addresses the current visual defect and establishes a clean seam in `main.gd`.
 
-`BoardShell` should contain:
+`BoardShell` contains:
 
 ```text
-AspectRatioContainer (1:1)
-  BoardCanvas
-    NinePatchRect (frame, full rect)
-    MarginContainer (explicit frame insets)
-      PanelContainer (board background)
-        BoardView (grid)
+BoardShell (bounded square canvas)
+  TextureRect (frame, aspect-covered)
+  MarginContainer (catalog-derived frame insets)
+    PanelContainer (board background)
+      BoardView (centered grid)
 ```
 
 Rules:
 
 - The grid determines its natural content size from cell size, board dimensions, and grid gaps.
-- The frame wraps that content; the board is not stretched to fill an arbitrary 760-pixel square.
-- Each frame has explicit left/top/right/bottom insets, stored as skin metadata. Do not calculate all four margins as 22% of the smallest texture dimension.
+- Framed layouts use a bounded 800-pixel canvas and reduce cell size as needed to fit the artwork's real opening; the grid itself is never stretched.
+- Each frame has independent left/top/right/bottom content ratios in `data/graphics/frames/index.json`. Do not calculate all four margins from one percentage.
 - Insets are independently tunable because ornamental art is rarely symmetrical.
 - `BoardShell` owns frame/background loading and sizing. `BoardView` knows only cells.
 - Add a debug toggle that outlines the frame rect, content rect, and grid rect while tuning assets.
 
-Suggested skin data:
+Rulesets may override catalog values when a skin needs custom alignment:
 
 ```json
 {
   "frame": "res://data/graphics/frames/Ornate with runes.png",
-  "frame_insets": { "left": 72, "top": 58, "right": 70, "bottom": 76 },
+  "frame_content_ratios": { "left": 0.16, "top": 0.18, "right": 0.16, "bottom": 0.19 },
   "background": "res://data/graphics/backgrounds/Parchment Background.png",
   "tiles": "res://data/graphics/raw tiles/Single Wizard Tile.png"
 }
 ```
 
-Insets are authored in source-image pixels and scaled with the displayed frame. A later visual skin editor can expose them as four draggable guides.
+Ratios describe the artwork's inner opening after aspect-cover cropping. A later visual skin editor can expose them as four draggable guides.
+
+### Progress (2026-08-23)
+
+- Added asset-reference coverage for title art, ruleset skins, and the frame catalog.
+- Added minimum-length cross-word regression coverage and corrected the validator.
+- Extracted `BoardShell` and `BoardView` scenes/scripts from `main.gd`.
+- Added per-frame content geometry and visually verified all four shipped frames at 1280x900.
 
 ## Online play model
 
@@ -174,7 +180,7 @@ Accounts, email validation, matchmaking, ranked ratings, and persistent statisti
 
 Exit: existing behavior is protected and asset moves fail loudly.
 
-### Phase 1 - Board presentation seam
+### Phase 1 - Board presentation seam (FIRST SLICE COMPLETE)
 
 - Extract `BoardShell` and `BoardView` from `_build_game_ui()`.
 - Add explicit frame insets to skin metadata.

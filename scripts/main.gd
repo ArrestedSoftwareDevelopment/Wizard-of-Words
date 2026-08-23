@@ -11,6 +11,7 @@ const COLOR_TILE := Color("5a3fa0")
 const COLOR_TILE_SEL := Color("8a6fd0")
 const COLOR_TILE_PEND := Color("d9a13a")
 const CELL_SIZE := 44.0
+const BOARD_SHELL_SCENE := preload("res://scenes/components/board_shell.tscn")
 
 var ruleset: WordRuleset
 var lexicon: Lexicon
@@ -24,7 +25,8 @@ var selected_rack := -1
 var passes_in_a_row := 0
 var game_over := false
 
-var board_grid: GridContainer
+var board_shell: BoardShell
+var board_view: BoardView
 var cell_buttons: Dictionary = {}
 var rack_box: HBoxContainer
 var score_label: Label
@@ -432,79 +434,13 @@ func _build_game_ui() -> void:
 			c.visible = false
 	add_child(game_root)
 
-	var board_panel := PanelContainer.new()
-	var bp_style := StyleBoxFlat.new()
-	bp_style.bg_color = Color("1c1430")
-	bp_style.set_content_margin_all(10.0)
-	bp_style.set_corner_radius_all(10)
-	var frame_tex: Texture2D = null
-	if ruleset.skin.has("frame"):
-		frame_tex = _load_texture_any(String(ruleset.skin["frame"]))
-	if frame_tex != null:
-		var board_container := Control.new()
-		board_container.custom_minimum_size = Vector2(760, 760)
-		game_root.add_child(board_container)
-		var frame_rect := NinePatchRect.new()
-		frame_rect.texture = frame_tex
-		var bw: int = frame_tex.get_width()
-		var bh: int = frame_tex.get_height()
-		var m: int = int(min(bw, bh) * 0.22)
-		frame_rect.patch_margin_left = m
-		frame_rect.patch_margin_right = m
-		frame_rect.patch_margin_top = m
-		frame_rect.patch_margin_bottom = m
-		frame_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-		board_container.add_child(frame_rect)
-		board_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
-		board_panel.offset_left = m
-		board_panel.offset_top = m
-		board_panel.offset_right = -m
-		board_panel.offset_bottom = -m
-		if ruleset.skin.has("background"):
-			var btex2 := _load_texture_any(String(ruleset.skin["background"]))
-			if btex2 != null:
-				var sbt2 := StyleBoxTexture.new()
-				sbt2.texture = btex2
-				sbt2.set_content_margin_all(10.0)
-				board_panel.add_theme_stylebox_override("panel", sbt2)
-			else:
-				board_panel.add_theme_stylebox_override("panel", bp_style)
-		else:
-			board_panel.add_theme_stylebox_override("panel", bp_style)
-		board_container.add_child(board_panel)
-	else:
-		if ruleset.skin.has("background"):
-			var btex := _load_texture_any(String(ruleset.skin["background"]))
-			if btex != null:
-				var sbt := StyleBoxTexture.new()
-				sbt.texture = btex
-				sbt.set_content_margin_all(10.0)
-				board_panel.add_theme_stylebox_override("panel", sbt)
-			else:
-				board_panel.add_theme_stylebox_override("panel", bp_style)
-		else:
-			board_panel.add_theme_stylebox_override("panel", bp_style)
-		game_root.add_child(board_panel)
-
-	board_grid = GridContainer.new()
-	board_grid.columns = ruleset.board_size
-	board_grid.add_theme_constant_override("h_separation", 2)
-	board_grid.add_theme_constant_override("v_separation", 2)
-	board_panel.add_child(board_grid)
-
-	cell_buttons.clear()
-	for y in range(ruleset.board_size):
-		for x in range(ruleset.board_size):
-			var pos := Vector2i(x, y)
-			var b := CellButton.new()
-			b.game = self
-			b.cell_pos = pos
-			b.custom_minimum_size = Vector2(CELL_SIZE, CELL_SIZE)
-			b.focus_mode = Control.FOCUS_NONE
-			b.pressed.connect(_on_cell_pressed.bind(pos))
-			_apply_prem_style(b, pos)
-			board_grid.add_child(b)
-			cell_buttons[pos] = b
+	board_shell = BOARD_SHELL_SCENE.instantiate()
+	game_root.add_child(board_shell)
+	board_shell.configure(ruleset.skin, ruleset.board_size, CELL_SIZE, self)
+	board_shell.cell_pressed.connect(_on_cell_pressed)
+	board_view = board_shell.board_view
+	cell_buttons = board_view.cell_buttons
+	refresh_board()
 
 	var side := VBoxContainer.new()
 	side.custom_minimum_size = Vector2(400, 0)
@@ -575,6 +511,7 @@ func _build_game_ui() -> void:
 
 
 func _apply_tile_look(b: Button, label: String, value: int, base: Color, letter_size := 22) -> void:
+	letter_size = mini(letter_size, maxi(10, int(b.custom_minimum_size.x * 0.64)))
 	for c in b.get_children():
 		b.remove_child(c)
 		c.queue_free()

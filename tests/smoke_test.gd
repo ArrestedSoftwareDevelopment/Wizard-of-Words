@@ -132,6 +132,21 @@ func _initialize() -> void:
 	if not MoveLogic.validate(empty2, za_move, strict_rs, zz_lex)["ok"]:
 		failures.append("strict mode wrongly rejected whitelisted ZA (blank)")
 
+	var min_three_rs := WordRuleset.load_from("res://data/rulesets/classic_grimoire.json")
+	min_three_rs.min_word_length = 3
+	var min_three_lex := Lexicon.new()
+	min_three_lex.words = {"CAT": true, "AA": true}
+	var cross_board := GameBoard.new()
+	cross_board.setup(15)
+	cross_board.place(Vector2i(7, 6), {"letter": "A", "value": 1, "blank": false})
+	var short_cross := [
+		{"pos": Vector2i(6, 7), "tile": {"letter": "C", "value": 3, "blank": false}},
+		{"pos": Vector2i(7, 7), "tile": {"letter": "A", "value": 1, "blank": false}},
+		{"pos": Vector2i(8, 7), "tile": {"letter": "T", "value": 1, "blank": false}},
+	]
+	if MoveLogic.validate(cross_board, short_cross, min_three_rs, min_three_lex)["ok"]:
+		failures.append("three-letter minimum accepted a two-letter cross-word")
+
 	var surge_rs := WordRuleset.load_from("res://data/rulesets/classic_grimoire.json")
 	var cat_lx := Lexicon.new()
 	cat_lx.words["CAT"] = true
