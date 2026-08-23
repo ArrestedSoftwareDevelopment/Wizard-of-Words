@@ -48,8 +48,8 @@ Visual themes are reusable skins and do not define gameplay. Classic Grimoire an
 | 1 | Wizardry | `wizardry` | Accepted and downloaded (Arcane Codex v2-bright) |
 | 2 | Gothic Horror | `gothic_horror` | Accepted and downloaded |
 | 3 | Pirate | `pirate` | Accepted and downloaded |
-| 4 | Space Age | `space_age` | Next |
-| 5 | Kitchen Witchery | `kitchen_witchery` | Queued |
+| 4 | Space Age | `space_age` | Accepted and downloaded |
+| 5 | Kitchen Witchery | `kitchen_witchery` | Next |
 | 6 | Prairie Homestead | `prairie_homestead` | Queued |
 | 7 | Velvet & Leather | `velvet_leather` | Queued |
 
@@ -94,6 +94,12 @@ Final prompt summary: full-screen premium painterly pirate captain's cabin; dark
 ### Space Age
 
 Optimistic retro-futurist starship: brushed alloy, molded ivory panels, midnight-blue observation windows, luminous instrument accents, subtle stars and restrained nebula color.
+
+Generated backdrops:
+
+- `backgrounds/generated/space_age/Space Age Backdrop v1.png` - OpenArt history `k3V0xhk5Tuwcjre5YvTg`, GPT Image 2 text-to-image, 2304x1296 PNG. Accepted.
+
+Final prompt summary: full-screen premium painterly retro-futurist observation lounge; curved warm-ivory architecture, brushed alloy, restrained cyan/amber lights, starfield, nebula and ringed planet; bright pearlescent illumination; broad uncluttered floor center; details at edges; no central table, board, tiles, UI text, figures, robots, weapons, or combat.
 
 ### Kitchen Witchery
 
