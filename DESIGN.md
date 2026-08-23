@@ -88,6 +88,8 @@ The seven canonical visual themes are:
 
 Backdrop production order is Wizardry, Gothic Horror, Pirate, Space Age, Kitchen Witchery, Prairie Homestead, then Velvet & Leather. Finish all seven backdrops before generating frames, tiles, racks, or premium ornaments so the overall visual range can be reviewed as one coherent set.
 
+All seven backdrops are now approved and integrated. Runtime theme selection is independent of ruleset selection; the selected theme's bonus vocabulary is controlled by one **Theme Word Bonuses** switch. The next art pass should replace the temporary shared Wizardry tiles/buttons with theme-specific tile faces, rack treatment, and restrained UI accents proven against the integrated layouts.
+
 Every production theme should provide a backdrop, blank tile face, rack/shelf, palette, and optional premium-cell ornament set. The full-screen backdrop is the primary decorative frame; the playable grid should use only a restrained bevel, rim light, or shadow so the board can scale freely without visual overload. Separate ornate board-frame artwork is optional, not a required theme asset. Source prompts and generation records live in `data/graphics/PROMPTS.md`.
 
 ## UX Upgrades

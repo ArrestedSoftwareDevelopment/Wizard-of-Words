@@ -3,18 +3,18 @@
 ## conjured in tandem with its human familiar.
 extends Control
 
-const COLOR_BG := Color("241a38")
 const COLOR_GOLD := Color("e8b23a")
 const COLOR_TILE := Color("5a3fa0")
 const COLOR_TILE_SEL := Color("8a6fd0")
 const COLOR_TILE_PEND := Color("d9a13a")
-const CELL_SIZE := 44.0
+const GRID_GAP := 2
 const BOARD_SHELL_SCENE := preload("res://scenes/components/board_shell.tscn")
 const TITLE_SCREEN_SCENE := preload("res://scenes/screens/title_screen.tscn")
 const SETUP_SCREEN_SCENE := preload("res://scenes/screens/setup_screen.tscn")
 const GAME_HUD_SCENE := preload("res://scenes/components/game_hud.tscn")
 const BLANK_PICKER_SCENE := preload("res://scenes/components/blank_picker.tscn")
 const TRADE_DIALOG_SCENE := preload("res://scenes/components/trade_dialog.tscn")
+const THEME_CATALOG := preload("res://scripts/ui/theme_catalog.gd")
 
 var ruleset: WordRuleset
 var lexicon: Lexicon
@@ -46,8 +46,8 @@ var ruleset_preview: TextureRect
 var lexicon_checks: Array = []
 var ai_difficulty_select: OptionButton
 var fog_check: CheckButton
-var tile_select: OptionButton
-var frame_select: OptionButton
+var theme_select: OptionButton
+var theme_bonus_check: CheckButton
 var ai_difficulty := "adept"
 var match_log_path := ""
 var trade_popup: PopupPanel
@@ -71,20 +71,49 @@ var game_hud: GameHud
 var trade_dialog: TradeDialog
 var match_config: MatchConfig
 var match_state: MatchState
+var backdrop_rect: TextureRect
+@onready var theme_stage: Variant = %ThemeStage
+var active_theme: Dictionary = {}
+var _resize_pending := false
 
 
 func _ready() -> void:
 	get_window().min_size = Vector2i(1024, 720)
-	var bg := ColorRect.new()
-	bg.color = COLOR_BG
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(bg)
+	backdrop_rect = theme_stage
+	active_theme = THEME_CATALOG.default_theme()
+	_apply_theme(active_theme)
 	_build_blank_picker()
 	_build_setup()
 	_build_title()
+	theme_stage.layout_changed.connect(_on_viewport_size_changed)
 	_show_title()
 
 
+func _apply_theme(theme: Dictionary) -> void:
+	active_theme = theme.duplicate(true)
+	if theme_stage != null:
+		theme_stage.apply_theme(active_theme)
+
+
+func _on_theme_changed(theme_id: String) -> void:
+	_apply_theme(THEME_CATALOG.find(theme_id))
+
+
+func _on_viewport_size_changed() -> void:
+	if game_root == null or _resize_pending:
+		return
+	_resize_pending = true
+	call_deferred("_resize_game_board")
+
+
+func _resize_game_board() -> void:
+	_resize_pending = false
+	if game_root == null or board_shell == null or ruleset == null:
+		return
+	board_shell.configure(active_theme, ruleset.board_size, theme_stage.calculate_cell_size(ruleset.board_size, GRID_GAP), self, GRID_GAP)
+	board_view = board_shell.board_view
+	cell_buttons = board_view.cell_buttons
+	refresh_board()
 func _unhandled_key_input(event: InputEvent) -> void:
 	if not event is InputEventKey or not event.pressed or event.echo:
 		return
@@ -140,6 +169,7 @@ func _show_title() -> void:
 func _show_create() -> void:
 	title_center.visible = false
 	setup_screen.visible = true
+	_apply_theme(THEME_CATALOG.find(setup_screen.selected_theme_id()))
 
 
 func _on_quick_play() -> void:
@@ -161,10 +191,9 @@ func _on_quick_play() -> void:
 	ai_check.button_pressed = bool(data.get("ai", true))
 	ai_difficulty_select.selected = int(data.get("difficulty", 1))
 	fog_check.button_pressed = bool(data.get("fog", false))
-	if tile_select != null:
-		tile_select.selected = clampi(int(data.get("tile", 0)), 0, maxi(0, tile_select.item_count - 1))
-	if frame_select != null:
-		frame_select.selected = clampi(int(data.get("frame", 0)), 0, maxi(0, frame_select.item_count - 1))
+	setup_screen.select_theme(str(data.get("theme", "wizardry")))
+	theme_bonus_check.button_pressed = bool(data.get("theme_bonus", true))
+	_apply_theme(THEME_CATALOG.find(setup_screen.selected_theme_id()))
 	_update_ruleset_preview()
 	_on_new_game()
 
@@ -179,8 +208,8 @@ func _save_prefs(rs_name: String, grimoires: Array) -> void:
 		"ai": ai_check.button_pressed,
 		"difficulty": ai_difficulty_select.selected,
 		"fog": fog_check.button_pressed,
-		"tile": tile_select.selected if tile_select != null else 0,
-		"frame": frame_select.selected if frame_select != null else 0
+		"theme": setup_screen.selected_theme_id(),
+		"theme_bonus": theme_bonus_check.button_pressed
 	}))
 	fa.close()
 
@@ -189,6 +218,7 @@ func _build_setup() -> void:
 	setup_screen = SETUP_SCREEN_SCENE.instantiate()
 	setup_screen.begin_requested.connect(_on_new_game)
 	setup_screen.back_requested.connect(_show_title)
+	setup_screen.visual_theme_changed.connect(_on_theme_changed)
 	add_child(setup_screen)
 	setup_panel = setup_screen.panel
 	ruleset_select = setup_screen.ruleset_select
@@ -197,8 +227,8 @@ func _build_setup() -> void:
 	ai_check = setup_screen.ai_check
 	ai_difficulty_select = setup_screen.ai_difficulty_select
 	fog_check = setup_screen.fog_check
-	tile_select = setup_screen.tile_select
-	frame_select = setup_screen.frame_select
+	theme_select = setup_screen.theme_select
+	theme_bonus_check = setup_screen.theme_bonus_check
 	new_game_btn = setup_screen.begin_button
 	dict_meta = setup_screen.dict_meta
 
@@ -229,7 +259,7 @@ func _build_game_ui() -> void:
 
 	board_shell = BOARD_SHELL_SCENE.instantiate()
 	game_root.add_child(board_shell)
-	board_shell.configure(ruleset.skin, ruleset.board_size, CELL_SIZE, self)
+	board_shell.configure(active_theme, ruleset.board_size, theme_stage.calculate_cell_size(ruleset.board_size, GRID_GAP), self, GRID_GAP)
 	board_shell.cell_pressed.connect(_on_cell_pressed)
 	board_view = board_shell.board_view
 	cell_buttons = board_view.cell_buttons
@@ -238,6 +268,7 @@ func _build_game_ui() -> void:
 	game_hud = GAME_HUD_SCENE.instantiate()
 	game_hud.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	game_root.add_child(game_hud)
+	game_hud.apply_theme(active_theme)
 	game_hud.cast_requested.connect(_on_play)
 	game_hud.recall_requested.connect(_on_recall)
 	game_hud.shuffle_requested.connect(_on_shuffle)
@@ -512,6 +543,10 @@ func _on_new_game() -> void:
 	for cb in lexicon_checks:
 		if cb.button_pressed:
 			chosen.append(cb.get_meta("file"))
+	active_theme = THEME_CATALOG.find(setup_screen.selected_theme_id())
+	var theme_bonus_file := str(active_theme.get("bonus_lexicon", ""))
+	if theme_bonus_check.button_pressed and theme_bonus_file != "" and not chosen.has(theme_bonus_file):
+		chosen.append(theme_bonus_file)
 	if chosen.is_empty():
 		_log("Select at least one grimoire.")
 		return
@@ -557,10 +592,10 @@ func _on_new_game() -> void:
 		return
 	if fog_check != null:
 		ruleset.fog_of_war = fog_check.button_pressed
-	if tile_select != null and tile_select.selected > 0:
-		ruleset.skin["tiles"] = "res://data/graphics/raw tiles/" + tile_select.get_item_text(tile_select.selected)
-	if frame_select != null and frame_select.selected > 0:
-		ruleset.skin["frame"] = "res://data/graphics/frames/" + frame_select.get_item_text(frame_select.selected)
+	# Visual themes are presentation-only. Ruleset mechanics remain independent,
+	# and the full-screen backdrop replaces the legacy ornate board frame.
+	ruleset.skin["frame"] = ""
+	ruleset.skin["background"] = ""
 
 	match_config = MatchConfig.new()
 	match_config.ruleset_path = rs_path
@@ -573,7 +608,7 @@ func _on_new_game() -> void:
 	match_config.ai_difficulty = ai_difficulty
 	match_config.fog_of_war = ruleset.fog_of_war
 	match_config.tile_path = str(ruleset.skin.get("tiles", ""))
-	match_config.frame_path = str(ruleset.skin.get("frame", ""))
+	match_config.frame_path = ""
 	match_config.seed = int(Time.get_unix_time_from_system() * 1000.0) ^ Time.get_ticks_usec()
 	match_state = MatchEngine.start_match(match_config, ruleset)
 	_adopt_match_state()

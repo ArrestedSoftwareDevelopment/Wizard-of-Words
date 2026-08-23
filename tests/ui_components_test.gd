@@ -41,6 +41,16 @@ func _run() -> void:
 	await process_frame
 	if not main.setup_screen.visible or main.title_screen.visible:
 		failures.append("create screen visibility is incorrect")
+	if main.setup_screen.theme_select.item_count != 7:
+		failures.append("setup screen does not expose all seven themes")
+	if main.setup_screen.theme_preview.texture == null:
+		failures.append("setup theme preview did not load")
+	main.setup_screen.select_theme("prairie_homestead")
+	if not main.setup_screen.theme_bonus_check.disabled:
+		failures.append("uncurated Prairie bonus vocabulary should be marked unavailable")
+	main.setup_screen.select_theme("wizardry")
+	if main.setup_screen.theme_bonus_check.disabled:
+		failures.append("Wizardry bonus vocabulary should be available")
 	_capture("res://.godot/phase2-setup.png")
 
 	main._on_new_game()
@@ -48,6 +58,10 @@ func _run() -> void:
 	await process_frame
 	if not main.game_hud is GameHud or main.rack_box != main.game_hud.rack_box:
 		failures.append("game HUD was not extracted or aliased")
+	if main.backdrop_rect.texture == null:
+		failures.append("game backdrop did not load")
+	if main.board_shell.frame_rect.visible:
+		failures.append("legacy ornate frame should be hidden during themed play")
 	main._ensure_trade_popup()
 	if not main.trade_popup is TradeDialog or main.trade_box != main.trade_dialog.trade_box:
 		failures.append("trade dialog was not extracted or aliased")

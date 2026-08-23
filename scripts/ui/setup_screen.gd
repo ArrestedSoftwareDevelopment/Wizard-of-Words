@@ -3,6 +3,9 @@ extends CenterContainer
 
 signal begin_requested
 signal back_requested
+signal visual_theme_changed(theme_id: String)
+
+const THEME_CATALOG := preload("res://scripts/ui/theme_catalog.gd")
 
 const COLOR_PANEL := Color("33245c")
 
@@ -10,11 +13,12 @@ var panel: PanelContainer
 var ruleset_select: OptionButton
 var ruleset_preview: TextureRect
 var lexicon_checks: Array = []
+var theme_select: OptionButton
+var theme_preview: TextureRect
+var theme_bonus_check: CheckButton
 var ai_check: CheckButton
 var ai_difficulty_select: OptionButton
 var fog_check: CheckButton
-var tile_select: OptionButton
-var frame_select: OptionButton
 var begin_button: Button
 var dict_meta: Dictionary = {}
 
@@ -79,8 +83,25 @@ func _build() -> void:
 	right_column.add_theme_constant_override("separation", 6)
 	columns.add_child(right_column)
 	left_column.add_child(UiFactory.make_caption("Grimoires"))
-	right_column.add_child(UiFactory.make_caption("Bonus Words"))
-	_build_lexicon_choices(left_column, right_column)
+	_build_lexicon_choices(left_column)
+	right_column.add_child(UiFactory.make_caption("Visual Theme"))
+	theme_select = OptionButton.new()
+	for theme in THEME_CATALOG.all():
+		theme_select.add_item(str(theme.get("title", theme.get("id", "Theme"))))
+		theme_select.set_item_metadata(theme_select.item_count - 1, str(theme.get("id", "")))
+	theme_select.item_selected.connect(_on_theme_selected)
+	right_column.add_child(theme_select)
+	theme_preview = TextureRect.new()
+	theme_preview.custom_minimum_size = Vector2(250, 141)
+	theme_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	theme_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	theme_preview.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	right_column.add_child(theme_preview)
+	theme_bonus_check = CheckButton.new()
+	theme_bonus_check.text = "Theme Word Bonuses"
+	theme_bonus_check.tooltip_text = "Award the selected theme's vocabulary bonus when matching words are played."
+	theme_bonus_check.button_pressed = true
+	right_column.add_child(theme_bonus_check)
 
 	ai_check = CheckButton.new()
 	ai_check.text = "Face the Word Wizard (AI)"
@@ -98,21 +119,6 @@ func _build() -> void:
 	fog_check.tooltip_text = "Bonus squares stay hidden until revealed near recently played tiles."
 	content.add_child(fog_check)
 
-	content.add_child(UiFactory.make_caption("Tile Set"))
-	tile_select = OptionButton.new()
-	tile_select.add_item("From Ruleset")
-	for filename in UiFactory.list_files("res://data/graphics/raw tiles", ["png"]):
-		if filename.begins_with("Single"):
-			tile_select.add_item(filename)
-	content.add_child(tile_select)
-
-	content.add_child(UiFactory.make_caption("Frame"))
-	frame_select = OptionButton.new()
-	frame_select.add_item("From Ruleset")
-	for filename in UiFactory.list_files("res://data/graphics/frames", ["png"]):
-		frame_select.add_item(filename)
-	content.add_child(frame_select)
-
 	begin_button = UiFactory.make_button("Begin the Duel")
 	begin_button.pressed.connect(func(): begin_requested.emit())
 	content.add_child(begin_button)
@@ -123,9 +129,10 @@ func _build() -> void:
 	credit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	content.add_child(credit)
 	update_ruleset_preview()
+	update_theme_preview()
 
 
-func _build_lexicon_choices(left_column: VBoxContainer, right_column: VBoxContainer) -> void:
+func _build_lexicon_choices(left_column: VBoxContainer) -> void:
 	var metadata_path := "res://data/dictionaries/index.json"
 	if FileAccess.file_exists(metadata_path):
 		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(metadata_path))
@@ -140,14 +147,49 @@ func _build_lexicon_choices(left_column: VBoxContainer, right_column: VBoxContai
 		var info: Dictionary = dict_meta.get(filename, {})
 		if info.is_empty():
 			info = dict_meta.get(filename.get_basename(), {})
+		if info.has("bonus_points"):
+			continue
 		checkbox.button_pressed = bool(info.get("default_checked", true))
 		if not info.is_empty():
 			checkbox.tooltip_text = str(info.get("title", "")) + "\n" + str(info.get("description", ""))
 		lexicon_checks.append(checkbox)
-		if info.has("bonus_points"):
-			right_column.add_child(checkbox)
-		else:
-			left_column.add_child(checkbox)
+		left_column.add_child(checkbox)
+
+
+func selected_theme_id() -> String:
+	if theme_select == null or theme_select.selected < 0:
+		return str(THEME_CATALOG.default_theme().get("id", "wizardry"))
+	return str(theme_select.get_item_metadata(theme_select.selected))
+
+
+func select_theme(theme_id: String) -> void:
+	if theme_select == null:
+		return
+	for index in range(theme_select.item_count):
+		if str(theme_select.get_item_metadata(index)) == theme_id:
+			theme_select.select(index)
+			update_theme_preview()
+			return
+
+
+func _on_theme_selected(_index: int) -> void:
+	update_theme_preview()
+	visual_theme_changed.emit(selected_theme_id())
+
+
+func update_theme_preview() -> void:
+	if theme_preview == null:
+		return
+	var theme: Dictionary = THEME_CATALOG.find(selected_theme_id())
+	theme_preview.texture = UiFactory.load_texture_any(str(theme.get("backdrop", "")))
+	var bonus_file := str(theme.get("bonus_lexicon", ""))
+	theme_bonus_check.disabled = bonus_file == ""
+	theme_bonus_check.text = "Theme Word Bonuses" if bonus_file != "" else "Theme Word Bonuses (vocabulary pending)"
+	theme_bonus_check.tooltip_text = (
+		"Award the selected theme's vocabulary bonus when matching words are played."
+		if bonus_file != ""
+		else "This theme's custom bonus vocabulary has not been curated yet."
+	)
 
 
 func update_ruleset_preview() -> void:

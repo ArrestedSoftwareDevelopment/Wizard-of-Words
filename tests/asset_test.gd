@@ -4,12 +4,27 @@ const TITLE_ART := [
 	"res://data/graphics/title screens/Title Screen 2.png",
 	"res://data/graphics/title screens/titlescreen1.png",
 ]
+const THEME_CATALOG := preload("res://scripts/ui/theme_catalog.gd")
 
 
 func _initialize() -> void:
 	var failures: Array = []
 	for path in TITLE_ART:
 		_check_texture(path, "title art", failures)
+
+	var themes: Array[Dictionary] = THEME_CATALOG.all()
+	if themes.size() != 7:
+		failures.append("theme catalog expected 7 themes, found %d" % themes.size())
+	var seen_ids: Dictionary = {}
+	for theme in themes:
+		var theme_id := str(theme.get("id", ""))
+		if theme_id == "" or seen_ids.has(theme_id):
+			failures.append("theme catalog has missing or duplicate id: %s" % theme_id)
+		seen_ids[theme_id] = true
+		_check_texture(str(theme.get("backdrop", "")), "%s backdrop" % theme_id, failures)
+		var bonus_file := str(theme.get("bonus_lexicon", ""))
+		if bonus_file != "" and not FileAccess.file_exists("res://data/dictionaries/" + bonus_file):
+			failures.append("%s bonus lexicon missing: %s" % [theme_id, bonus_file])
 
 	var dir := DirAccess.open("res://data/rulesets")
 	if dir == null:

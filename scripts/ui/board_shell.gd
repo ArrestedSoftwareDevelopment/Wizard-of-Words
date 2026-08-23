@@ -5,7 +5,7 @@ signal cell_pressed(pos: Vector2i)
 
 const FRAME_CATALOG_PATH := "res://data/graphics/frames/index.json"
 const DEFAULT_FRAME_RATIOS := {"left": 0.18, "top": 0.18, "right": 0.18, "bottom": 0.18}
-const FRAMELESS_INSETS := {"left": 10, "top": 10, "right": 10, "bottom": 10}
+const FRAMELESS_INSETS := {"left": 6, "top": 6, "right": 6, "bottom": 6}
 const MAX_FRAMED_EXTENT := 800.0
 
 @onready var frame_rect: TextureRect = %Frame
@@ -43,7 +43,7 @@ func configure(skin: Dictionary, board_size: int, cell_size: float, interaction_
 	frame_rect.visible = frame_texture != null
 	frame_rect.texture = frame_texture
 
-	_apply_board_background(String(skin.get("background", "")))
+	_apply_board_background(String(skin.get("background", "")), skin)
 	board_view.setup(board_size, effective_cell_size, interaction_host, gap)
 	board_view.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	board_view.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -85,7 +85,7 @@ func _apply_insets(insets: Dictionary) -> void:
 	content_margin.add_theme_constant_override("margin_bottom", int(insets["bottom"]))
 
 
-func _apply_board_background(path: String) -> void:
+func _apply_board_background(path: String, skin: Dictionary) -> void:
 	var texture := _load_texture_any(path)
 	if texture != null:
 		var textured := StyleBoxTexture.new()
@@ -93,8 +93,12 @@ func _apply_board_background(path: String) -> void:
 		board_panel.add_theme_stylebox_override("panel", textured)
 		return
 	var fallback := StyleBoxFlat.new()
-	fallback.bg_color = Color("1c1430")
-	fallback.set_corner_radius_all(8)
+	fallback.bg_color = Color(str(skin.get("board_color", "#1c1430")))
+	fallback.border_color = Color(str(skin.get("board_border_color", "#b58b42")))
+	fallback.set_border_width_all(2)
+	fallback.set_corner_radius_all(6)
+	fallback.shadow_color = Color(0, 0, 0, 0.65)
+	fallback.shadow_size = 8
 	board_panel.add_theme_stylebox_override("panel", fallback)
 
 

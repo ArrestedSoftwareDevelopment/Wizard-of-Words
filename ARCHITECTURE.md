@@ -8,7 +8,7 @@ This document is the implementation plan for growing the current vertical slice 
 2. UI scenes render state and emit player intent. They do not validate moves, mutate scores, draw tiles, or advance turns directly.
 3. A match is reproducible from its setup, seed, and ordered commands.
 4. Networking transports commands and events rather than mirroring the UI scene tree.
-5. Art layout data is explicit. A frame should never depend on a guessed percentage of its texture dimensions.
+5. Art layout data is explicit. Full-screen theme backdrops provide the primary environmental frame; optional legacy frames never depend on guessed texture geometry.
 
 ## Target project shape
 
@@ -99,16 +99,16 @@ Pending placement may remain client-side for responsiveness, but `CommitMove`, `
 
 Every committed command receives a monotonically increasing sequence number. `MatchSerializer` can save a full snapshot and encode/decode commands and events using protocol-safe dictionaries. This becomes the shared foundation for saved games, replay logs, reconnection, spectators, desync diagnosis, and automated simulations.
 
-## Board and frame layout
+## Board and theme layout
 
 The first extracted UI component should be `BoardShell`, because it addresses the current visual defect and establishes a clean seam in `main.gd`.
 
-`BoardShell` contains:
+`BoardShell` retains optional legacy-frame support, but normal themed play now contains:
 
 ```text
-BoardShell (bounded square canvas)
-  TextureRect (frame, aspect-covered)
-  MarginContainer (catalog-derived frame insets)
+Full-screen TextureRect (theme backdrop, aspect-covered)
+BoardShell (responsive square canvas)
+  MarginContainer (small presentation inset)
     PanelContainer (board background)
       BoardView (centered grid)
 ```
@@ -116,10 +116,12 @@ BoardShell (bounded square canvas)
 Rules:
 
 - The grid determines its natural content size from cell size, board dimensions, and grid gaps.
-- Framed layouts use a bounded 800-pixel canvas and reduce cell size as needed to fit the artwork's real opening; the grid itself is never stretched.
+- The full-screen backdrop supplies the major ornament. The board uses only a restrained bevel, rim light, and shadow so it does not compete with the environment.
+- Cell size is calculated from the live viewport, HUD width, board dimensions, and grid gap. The grid itself is never texture-stretched.
+- Optional legacy framed layouts retain a bounded 800-pixel canvas and reduce cell size as needed to fit the artwork's real opening.
 - Each frame has independent left/top/right/bottom content ratios in `data/graphics/frames/index.json`. Do not calculate all four margins from one percentage.
 - Insets are independently tunable because ornamental art is rarely symmetrical.
-- `BoardShell` owns frame/background loading and sizing. `BoardView` knows only cells.
+- `BoardShell` owns board-edge treatment and optional legacy-frame sizing. `BoardView` knows only cells.
 - Add a debug toggle that outlines the frame rect, content rect, and grid rect while tuning assets.
 
 Rulesets may override catalog values when a skin needs custom alignment:
@@ -142,6 +144,8 @@ Ratios describe the artwork's inner opening after aspect-cover cropping. A later
 - Extracted `BoardShell` and `BoardView` scenes/scripts from `main.gd`.
 - Added per-frame content geometry and visually verified all four shipped frames at 1280x900.
 - Enabled fullscreen canvas scaling with expanded aspect support and a centered board/HUD composition; verified at 1680x1050 while retaining a 1024x720 minimum window.
+- Added a seven-theme presentation catalog independent of gameplay rulesets, live setup preview, saved theme preference, optional theme-word bonuses, theme-aware HUD colors, full-screen aspect-covered backdrops, and responsive frameless board sizing.
+- Visually verified Wizardry, Gothic Horror, Pirate, Space Age, Kitchen Witchery, Prairie Homestead, and Velvet & Leather with the real board/HUD at 1680x1050.
 
 ## Online play model
 

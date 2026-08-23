@@ -1,0 +1,72 @@
+[
+	{
+		"id": "wizardry",
+		"title": "Wizardry",
+		"backdrop": "res://data/graphics/backgrounds/generated/arcane_codex/Arcane Codex Backdrop v2-bright.png",
+		"bonus_lexicon": "arcane_lexicon.txt",
+		"panel_color": "#241a38",
+		"accent_color": "#e8b23a",
+		"board_color": "#20172d",
+		"board_border_color": "#c89b43"
+	},
+	{
+		"id": "gothic_horror",
+		"title": "Gothic Horror",
+		"backdrop": "res://data/graphics/backgrounds/generated/gothic_horror/Gothic Horror Backdrop v1.png",
+		"bonus_lexicon": "gothic_grimoire.txt",
+		"panel_color": "#1b161d",
+		"accent_color": "#c4a6b9",
+		"board_color": "#171419",
+		"board_border_color": "#80505c"
+	},
+	{
+		"id": "pirate",
+		"title": "Pirate",
+		"backdrop": "res://data/graphics/backgrounds/generated/pirate/Pirate Backdrop v1.png",
+		"bonus_lexicon": "pirate_pillage.txt",
+		"panel_color": "#2a1b12",
+		"accent_color": "#e0ad4f",
+		"board_color": "#21150f",
+		"board_border_color": "#a87532"
+	},
+	{
+		"id": "space_age",
+		"title": "Space Age",
+		"backdrop": "res://data/graphics/backgrounds/generated/space_age/Space Age Backdrop v1.png",
+		"bonus_lexicon": "cosmic_canticle.txt",
+		"panel_color": "#16243b",
+		"accent_color": "#77d5ff",
+		"board_color": "#17263d",
+		"board_border_color": "#9bdff4"
+	},
+	{
+		"id": "kitchen_witchery",
+		"title": "Kitchen Witchery",
+		"backdrop": "res://data/graphics/backgrounds/generated/kitchen_witchery/Kitchen Witchery Backdrop v1.png",
+		"bonus_lexicon": "kitchen_witchery.txt",
+		"panel_color": "#302417",
+		"accent_color": "#e6bd68",
+		"board_color": "#2a2015",
+		"board_border_color": "#ad7941"
+	},
+	{
+		"id": "prairie_homestead",
+		"title": "Prairie Homestead",
+		"backdrop": "res://data/graphics/backgrounds/generated/prairie_homestead/Prairie Homestead Backdrop v1.png",
+		"bonus_lexicon": "",
+		"panel_color": "#342519",
+		"accent_color": "#e3bd6d",
+		"board_color": "#2c2017",
+		"board_border_color": "#a7773e"
+	},
+	{
+		"id": "velvet_leather",
+		"title": "Velvet & Leather",
+		"backdrop": "res://data/graphics/backgrounds/generated/velvet_leather/Velvet and Leather Backdrop v1.png",
+		"bonus_lexicon": "",
+		"panel_color": "#2d1119",
+		"accent_color": "#e3aa62",
+		"board_color": "#1b1515",
+		"board_border_color": "#9c683f"
+	}
+]

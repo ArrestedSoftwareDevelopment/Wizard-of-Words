@@ -21,6 +21,8 @@ var shuffle_button: Button
 var pass_button: Button
 var trade_button: Button
 var new_game_button: Button
+var panel: PanelContainer
+var panel_style: StyleBoxFlat
 
 
 func _ready() -> void:
@@ -30,8 +32,8 @@ func _ready() -> void:
 
 
 func _build() -> void:
-	var panel := PanelContainer.new()
-	var panel_style := StyleBoxFlat.new()
+	panel = PanelContainer.new()
+	panel_style = StyleBoxFlat.new()
 	panel_style.bg_color = COLOR_PANEL
 	panel_style.set_content_margin_all(16.0)
 	panel_style.set_corner_radius_all(10)
@@ -74,6 +76,17 @@ func _build() -> void:
 	log_label.custom_minimum_size = Vector2(0, 180)
 	log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	content.add_child(log_label)
+
+
+func apply_theme(theme: Dictionary) -> void:
+	if panel_style == null:
+		return
+	var panel_color := Color(str(theme.get("panel_color", COLOR_PANEL.to_html(false))))
+	panel_color.a = 0.94
+	panel_style.bg_color = panel_color
+	var accent := Color(str(theme.get("accent_color", COLOR_GOLD.to_html(false))))
+	if turn_label != null:
+		turn_label.add_theme_color_override("font_color", accent)
 
 
 func _action_button(text: String, action: Signal, parent: Control) -> Button:
