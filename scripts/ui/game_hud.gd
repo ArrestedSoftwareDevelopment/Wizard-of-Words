@@ -10,6 +10,10 @@ signal new_game_requested
 
 const COLOR_PANEL := Color("33245c")
 const COLOR_GOLD := Color("e8b23a")
+const MIN_HUD_WIDTH := 400.0
+const RACK_TILE_WIDTH := 48.0
+const RACK_GAP := 6.0
+const PANEL_HORIZONTAL_PADDING := 32.0
 
 var rack_box: HBoxContainer
 var score_label: Label
@@ -26,9 +30,10 @@ var panel_style: StyleBoxFlat
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(400, 0)
+	custom_minimum_size = Vector2(MIN_HUD_WIDTH, 0)
 	add_theme_constant_override("separation", 10)
 	_build()
+	set_rack_capacity(8)
 
 
 func _build() -> void:
@@ -76,6 +81,15 @@ func _build() -> void:
 	log_label.custom_minimum_size = Vector2(0, 180)
 	log_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	content.add_child(log_label)
+
+
+func set_rack_capacity(capacity: int) -> void:
+	if rack_box == null:
+		return
+	var slots := maxi(1, capacity)
+	var reserved_rack_width := float(slots) * RACK_TILE_WIDTH + float(slots - 1) * RACK_GAP
+	rack_box.custom_minimum_size.x = reserved_rack_width
+	custom_minimum_size.x = maxf(MIN_HUD_WIDTH, reserved_rack_width + PANEL_HORIZONTAL_PADDING)
 
 
 func apply_theme(theme: Dictionary) -> void:

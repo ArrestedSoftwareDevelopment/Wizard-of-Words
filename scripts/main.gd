@@ -15,6 +15,9 @@ const GAME_HUD_SCENE := preload("res://scenes/components/game_hud.tscn")
 const BLANK_PICKER_SCENE := preload("res://scenes/components/blank_picker.tscn")
 const TRADE_DIALOG_SCENE := preload("res://scenes/components/trade_dialog.tscn")
 const THEME_CATALOG := preload("res://scripts/ui/theme_catalog.gd")
+const MENU_FADE_SECONDS := 0.45
+const ATMOSPHERE_HOLD_SECONDS := 2.25
+const GAME_FADE_SECONDS := 0.75
 
 var ruleset: WordRuleset
 var lexicon: Lexicon
@@ -75,6 +78,8 @@ var backdrop_rect: TextureRect
 @onready var theme_stage: Variant = %ThemeStage
 var active_theme: Dictionary = {}
 var _resize_pending := false
+var _game_transitioning := false
+var skip_intro_animation := false
 
 
 func _ready() -> void:
@@ -163,11 +168,17 @@ func _hide_game_and_setup() -> void:
 
 func _show_title() -> void:
 	_hide_game_and_setup()
+	title_center.modulate = Color.WHITE
+	title_center.process_mode = Node.PROCESS_MODE_INHERIT
 	title_center.visible = true
 
 
 func _show_create() -> void:
+	if _game_transitioning:
+		return
 	title_center.visible = false
+	setup_screen.modulate = Color.WHITE
+	setup_screen.process_mode = Node.PROCESS_MODE_INHERIT
 	setup_screen.visible = true
 	_apply_theme(THEME_CATALOG.find(setup_screen.selected_theme_id()))
 
@@ -268,6 +279,7 @@ func _build_game_ui() -> void:
 	game_hud = GAME_HUD_SCENE.instantiate()
 	game_hud.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	game_root.add_child(game_hud)
+	game_hud.set_rack_capacity(ruleset.rack_size)
 	game_hud.apply_theme(active_theme)
 	game_hud.cast_requested.connect(_on_play)
 	game_hud.recall_requested.connect(_on_recall)
@@ -288,6 +300,30 @@ func _build_game_ui() -> void:
 	var right_spacer := Control.new()
 	right_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	game_root.add_child(right_spacer)
+
+
+func _transition_to_game() -> void:
+	if skip_intro_animation or DisplayServer.get_name() == "headless":
+		_build_game_ui()
+		return
+	_game_transitioning = true
+	var departing_screen: Control = setup_screen if setup_screen.visible else title_screen
+	departing_screen.process_mode = Node.PROCESS_MODE_DISABLED
+	var menu_tween := create_tween()
+	menu_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	menu_tween.tween_property(departing_screen, "modulate:a", 0.0, MENU_FADE_SECONDS)
+	await menu_tween.finished
+	departing_screen.visible = false
+	await get_tree().create_timer(ATMOSPHERE_HOLD_SECONDS).timeout
+	_build_game_ui()
+	game_root.modulate.a = 0.0
+	var game_tween := create_tween()
+	game_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	game_tween.tween_property(game_root, "modulate:a", 1.0, GAME_FADE_SECONDS)
+	await game_tween.finished
+	departing_screen.modulate = Color.WHITE
+	departing_screen.process_mode = Node.PROCESS_MODE_INHERIT
+	_game_transitioning = false
 
 
 func _apply_tile_look(b: Button, label: String, value: int, base: Color, letter_size := 22) -> void:
@@ -536,6 +572,8 @@ func _append_move_log(pl: Dictionary, positions: Array, word_names: Array, score
 
 
 func _on_new_game() -> void:
+	if _game_transitioning:
+		return
 	if ruleset_select.item_count == 0:
 		_log("No rulesets found in res://data/rulesets/.")
 		return
@@ -620,7 +658,7 @@ func _on_new_game() -> void:
 	if game_root != null:
 		game_root.queue_free()
 		game_root = null
-	_build_game_ui()
+	await _transition_to_game()
 	_log("Grimoire loaded: %s (%d words). Ruleset: %s." % [lexicon.lexicon_name, lexicon.size(), ruleset.ruleset_name])
 	refresh_all()
 	if players[current].get("is_ai", false):

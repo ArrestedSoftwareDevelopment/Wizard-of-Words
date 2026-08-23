@@ -5,7 +5,7 @@ signal layout_changed
 
 const DEFAULT_CELL_SIZE := 44.0
 const MAX_CELL_SIZE := 68.0
-const HUD_WIDTH := 400.0
+const HUD_WIDTH := 460.0
 const GAME_MARGIN := 24.0
 
 

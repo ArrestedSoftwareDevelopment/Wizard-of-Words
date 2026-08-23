@@ -23,6 +23,7 @@ func _run() -> void:
 	root.mode = Window.MODE_WINDOWED
 	root.size = CAPTURE_SIZE
 	var main: Variant = load("res://scenes/main.tscn").instantiate()
+	main.skip_intro_animation = true
 	root.add_child(main)
 	await process_frame
 	await process_frame

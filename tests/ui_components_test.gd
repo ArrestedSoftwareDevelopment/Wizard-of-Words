@@ -61,6 +61,15 @@ func _run() -> void:
 	await process_frame
 	if not main.game_hud is GameHud or main.rack_box != main.game_hud.rack_box:
 		failures.append("game HUD was not extracted or aliased")
+	if main.game_hud.rack_box.custom_minimum_size.x < 400.0:
+		failures.append("game HUD does not reserve space for a full rack")
+	var full_rack_hud_width: float = main.game_hud.size.x
+	var removed_rune: Control = main.rack_box.get_child(main.rack_box.get_child_count() - 1)
+	main.rack_box.remove_child(removed_rune)
+	removed_rune.queue_free()
+	await process_frame
+	if not is_equal_approx(main.game_hud.size.x, full_rack_hud_width):
+		failures.append("game HUD width changes when a rune leaves the rack")
 	if main.backdrop_rect.texture == null:
 		failures.append("game backdrop did not load")
 	if main.board_shell.frame_rect.visible:
