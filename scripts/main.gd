@@ -406,6 +406,7 @@ func _apply_prem_style(b: Button, pos: Vector2i) -> void:
 	var col: Color = prem["color"]
 	var label := String(prem.get("glyph", ""))
 	var glyph_atlas := str(active_theme.get("premium_glyph_atlas", ""))
+	var remove_glyph_matte := bool(active_theme.get("premium_glyph_remove_matte", true))
 	if label != "":
 		tooltip = String(prem["name"])
 	_apply_tile_look(b, "" if glyph_atlas != "" else label, col, 20, 0.0)
@@ -421,7 +422,7 @@ func _apply_prem_style(b: Button, pos: Vector2i) -> void:
 		if glyph_atlas != "":
 			var premium_key := String(ruleset.layout[pos.y])[pos.x]
 			var glyph := PremiumGlyph.new()
-			if glyph.configure(glyph_atlas, premium_key):
+			if glyph.configure(glyph_atlas, premium_key, remove_glyph_matte):
 				b.add_child(glyph)
 			else:
 				glyph.queue_free()

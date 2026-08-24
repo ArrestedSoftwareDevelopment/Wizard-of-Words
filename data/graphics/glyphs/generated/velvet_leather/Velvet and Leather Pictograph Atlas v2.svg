@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="1024" viewBox="0 0 1536 1024">
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Double letter: linked broad bands. -->
+    <g transform="translate(256 256)" stroke-width="54">
+      <ellipse cx="-58" cy="0" rx="112" ry="142" stroke="#c4973f"/>
+      <ellipse cx="58" cy="0" rx="112" ry="142" stroke="#7b1420"/>
+    </g>
+
+    <!-- Triple letter: three equal silk loops. -->
+    <g transform="translate(768 276)" stroke="#c4973f" stroke-width="46">
+      <ellipse cx="0" cy="-48" rx="72" ry="120"/>
+      <ellipse cx="-48" cy="42" rx="72" ry="120" transform="rotate(120 -48 42)"/>
+      <ellipse cx="48" cy="42" rx="72" ry="120" transform="rotate(-120 48 42)"/>
+    </g>
+
+    <!-- Center: garnet compass-star. -->
+    <g transform="translate(1280 256)">
+      <path fill="#7b1420" d="M0-172 48-48 172 0 48 48 0 172-48 48-172 0-48-48Z"/>
+      <path fill="#c4973f" d="M0-88 25-25 88 0 25 25 0 88-25 25-88 0-25-25Z"/>
+      <path fill="#171313" d="M0-43 43 0 0 43-43 0Z"/>
+    </g>
+
+    <!-- Double word: balanced paired rose pictograph. -->
+    <g transform="translate(256 768)">
+      <g fill="#7b1420">
+        <g transform="translate(-82 -45)">
+          <circle cx="0" cy="-44" r="58"/><circle cx="42" cy="-14" r="58"/>
+          <circle cx="26" cy="38" r="58"/><circle cx="-26" cy="38" r="58"/>
+          <circle cx="-42" cy="-14" r="58"/><circle r="49"/>
+        </g>
+        <g transform="translate(82 -45)">
+          <circle cx="0" cy="-44" r="58"/><circle cx="42" cy="-14" r="58"/>
+          <circle cx="26" cy="38" r="58"/><circle cx="-26" cy="38" r="58"/>
+          <circle cx="-42" cy="-14" r="58"/><circle r="49"/>
+        </g>
+      </g>
+      <g stroke="#c4973f" stroke-width="34">
+        <path d="M-82 44-28 150M82 44 28 150M-28 150H28"/>
+        <path d="M-54 98-122 98M54 98H122"/>
+      </g>
+      <g fill="#c4973f">
+        <path d="M-120 98c30-54 68-48 78-8-31 26-58 26-78 8Z"/>
+        <path d="M120 98c-30-54-68-48-78-8 31 26 58 26 78 8Z"/>
+      </g>
+    </g>
+
+    <!-- Triple word: three interlocking heraldic rings. -->
+    <g transform="translate(768 768)" stroke="#c4973f" stroke-width="48">
+      <circle cx="0" cy="-70" r="104"/>
+      <circle cx="-76" cy="62" r="104"/>
+      <circle cx="76" cy="62" r="104"/>
+    </g>
+  </g>
+</svg>

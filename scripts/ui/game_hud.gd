@@ -121,6 +121,7 @@ func set_premium_legend(legend: Dictionary, theme: Dictionary) -> void:
 	for child in premium_legend_box.get_children():
 		child.queue_free()
 	var atlas_path := str(theme.get("premium_glyph_atlas", ""))
+	var remove_matte := bool(theme.get("premium_glyph_remove_matte", true))
 	for key in ["d", "t", "*", "D", "T"]:
 		var premium: Dictionary = legend.get(key, {})
 		var item := VBoxContainer.new()
@@ -132,7 +133,7 @@ func set_premium_legend(legend: Dictionary, theme: Dictionary) -> void:
 		icon_holder.custom_minimum_size = Vector2(38, 38)
 		item.add_child(icon_holder)
 		var glyph := PremiumGlyph.new()
-		if atlas_path != "" and glyph.configure(atlas_path, key):
+		if atlas_path != "" and glyph.configure(atlas_path, key, remove_matte):
 			icon_holder.add_child(glyph)
 		else:
 			glyph.queue_free()

@@ -13,7 +13,7 @@ const ATLAS_POSITIONS := {
 }
 
 
-func configure(atlas_path: String, premium_key: String) -> bool:
+func configure(atlas_path: String, premium_key: String, remove_matte: bool = true) -> bool:
 	var source := UiFactory.load_texture_any(atlas_path)
 	if source == null or not ATLAS_POSITIONS.has(premium_key):
 		return false
@@ -31,7 +31,9 @@ func configure(atlas_path: String, premium_key: String) -> bool:
 	stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var shader_material := ShaderMaterial.new()
-	shader_material.shader = GLYPH_SHADER
-	material = shader_material
+	material = null
+	if remove_matte:
+		var shader_material := ShaderMaterial.new()
+		shader_material.shader = GLYPH_SHADER
+		material = shader_material
 	return true
