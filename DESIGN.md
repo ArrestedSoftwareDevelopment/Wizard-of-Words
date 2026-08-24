@@ -123,8 +123,19 @@ Fast word-casting alternatives to tile-by-tile placement:
 ## Platform & Architecture
 - **Modularity**: core sim (board/rules/validation/scoring) stays UI-free and headless-runnable; presentation, AI, and net layers consume it via signals. Ruleset/dictionary plugins stay pure data.
 - **Two-player local**: hotseat (done).
-- **Two-player online**: Godot high-level multiplayer (ENet/WebSocket); authoritative host or lightweight dedicated server running the headless core; deterministic seeded bloom keeps boards in sync cheaply. Reconnect + spectator mode later.
-- **Accounts & email validation**: registration with email verification link (expiring token), password reset; backend service issues JWT/session tokens; game client stores only session, never credentials. Required before ranked/online leaderboards.
+- **Two-player online**: a tiny WebSocket room for two trusted players. One host runs the authoritative headless match core; the relay only connects a short-lived room code and forwards small JSON envelopes. There are no accounts, database, matchmaking, rankings, spectators, or scaling requirements for the initial version.
+
+### Minimal Remote Play Contract
+
+- Both clients run the normal local presentation, dictionary, scoring preview, animation, audio, and theme code. The host alone accepts commands and advances the authoritative `MatchState`.
+- The host sends the agreed public match configuration once: protocol/content versions, ruleset, lexicons, theme-layout ID, and player seats. Art assets and the private bag seed never cross the socket; any future deterministic board-effect seed is separate and public.
+- Network commands are already represented by `MatchCommand`: place a rack tile at a cell, move or recall a pending tile, commit, pass, or trade. Only settled actions are sent; mouse position, drag motion, hover, shelf order, and cosmetic effects remain local.
+- Accepted `MatchEvent` records are broadcast in sequence. Public events contain board positions, committed words, score changes, turn changes, and game-end data. Rack refills and trades send a separate private rack update only to the owning player.
+- The guest may predict its own pending placement immediately for responsiveness, then confirms or rolls it back when the host replies. The committed board never changes without a host event.
+- Every envelope carries protocol version, room ID, sequence number, player seat, and idempotency key. A stale sequence requests one compact snapshot rather than attempting to merge divergent histories.
+- The relay keeps rooms only in memory and discards them after both users leave. A random invitation code plus room secret is sufficient authentication for the two-person version.
+- On reconnect, the host sends public board state, scores, turn, bag count, revealed cells, and the reconnecting player's private rack. The opponent's rack and bag contents are never exposed.
+- Expected traffic is a few small messages per turn—normally hundreds of bytes, with a snapshot of only a few kilobytes after reconnect. JSON is preferred initially because it is inspectable; binary encoding would add complexity without meaningful benefit.
 
 ## Identity & Caster Classes
 Foundation for expansion "every upward" - players are characters, not just scoreboards:
