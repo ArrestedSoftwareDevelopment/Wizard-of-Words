@@ -7,7 +7,7 @@ const ATLASES := {
 	"space_age": "res://data/graphics/glyphs/generated/space_age/Space Age Pictograph Atlas v2.png",
 	"kitchen_witchery": "res://data/graphics/glyphs/generated/kitchen_witchery/Kitchen Witchery Pictograph Atlas v2.png",
 	"prairie_homestead": "res://data/graphics/glyphs/generated/prairie_homestead/Prairie Homestead Pictograph Atlas v2.png",
-	"velvet_leather": "res://data/graphics/glyphs/generated/velvet_leather/Velvet and Leather Pictograph Atlas v3.png",
+	"velvet_leather": "res://data/graphics/glyphs/generated/velvet_leather/Velvet and Leather Pictograph Atlas v4.png",
 }
 const CELL_SIZE := Vector2i(512, 512)
 const OCCUPIED_CELLS := [
