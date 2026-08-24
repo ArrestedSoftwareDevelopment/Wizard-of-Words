@@ -1,6 +1,6 @@
 extends SceneTree
 
-const ATLAS_PATH := "res://data/graphics/glyphs/generated/velvet_leather/Velvet and Leather Pictograph Atlas v2.svg"
+const ATLAS_PATH := "res://data/graphics/glyphs/generated/velvet_leather/Velvet and Leather Pictograph Atlas v3.png"
 const CELL_SIZE := Vector2i(512, 512)
 const OCCUPIED_CELLS := [
 	Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0),
@@ -22,7 +22,10 @@ func _initialize() -> void:
 		failures.append("pictograph atlas must import at 1536x1024")
 		_finish(failures)
 		return
-	image.save_png("res://.godot/velvet-pictograph-atlas-v2.png")
+	image.save_png("res://.godot/velvet-pictograph-atlas-v3.png")
+	var actual_size_preview := image.duplicate()
+	actual_size_preview.resize(144, 96, Image.INTERPOLATE_LANCZOS)
+	actual_size_preview.save_png("res://.godot/velvet-pictograph-atlas-v3-at-48px.png")
 
 	for cell in OCCUPIED_CELLS:
 		var bounds := _alpha_bounds(image, cell)

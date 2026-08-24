@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3n1ktjlhnegx"
-path="res://.godot/imported/Velvet and Leather Pictograph Atlas v2.svg-35b9297297abf31e2c5117710274e88c.ctex"
+uid="uid://ct8m4ibi0sb7r"
+path="res://.godot/imported/Velvet and Leather Pictograph Atlas v3 source.png-31d93f35c579a9cc6572ac1fe1ae4b39.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://data/graphics/glyphs/generated/velvet_leather/Velvet and Leather Pictograph Atlas v2.svg"
-dest_files=["res://.godot/imported/Velvet and Leather Pictograph Atlas v2.svg-35b9297297abf31e2c5117710274e88c.ctex"]
+source_file="res://data/graphics/glyphs/generated/velvet_leather/Velvet and Leather Pictograph Atlas v3 source.png"
+dest_files=["res://.godot/imported/Velvet and Leather Pictograph Atlas v3 source.png-31d93f35c579a9cc6572ac1fe1ae4b39.ctex"]
 
 [params]
 
@@ -38,6 +38,3 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
-svg/scale=1.0
-editor/scale_with_editor_scale=false
-editor/convert_colors_with_editor_theme=false
