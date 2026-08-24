@@ -40,7 +40,14 @@ godot --headless --path . --script tests/ui_test.gd
 godot --headless --path . --script tests/ui_components_test.gd
 godot --headless --path . --script tests/match_engine_test.gd
 godot --headless --path . --script tests/pass_test.gd
+godot --headless --path . --script tests/language_data_test.gd
 ```
+
+## Words and board language
+
+Vocabulary is catalog-driven. The game combines one or more base grimoires with opt-in modules (names, acronyms, language varieties, foreign-language starters, and jargon), then adds the selected board's bonus lexicon when enabled. Hidden policy files independently govern profanity, slurs, proper nouns, brands/trademarks, and strict two-letter play.
+
+Each of the seven boards also owns a writing pack under `data/language/`. Move, bonus, pass, trade, AI, opening, and victory lines are selected deterministically from the match event, so remote play will not need to transmit decorative prose. See [the lexicon system](data/dictionaries/README.md) and [the provenance ledger](LICENSES.md).
 
 ## Project guide
 

@@ -17,6 +17,7 @@ const BLANK_PICKER_SCENE := preload("res://scenes/components/blank_picker.tscn")
 const TRADE_DIALOG_SCENE := preload("res://scenes/components/trade_dialog.tscn")
 const THEME_INTRO_CARD_SCENE := preload("res://scenes/components/theme_intro_card.tscn")
 const THEME_CATALOG := preload("res://scripts/ui/theme_catalog.gd")
+const THEME_LANGUAGE := preload("res://scripts/language/theme_language.gd")
 const MENU_FADE_SECONDS := 0.45
 const BACKDROP_PRE_TITLE_SECONDS := 0.55
 const TITLE_FADE_IN_SECONDS := 0.70
@@ -87,6 +88,7 @@ var _game_transitioning := false
 var skip_intro_animation := false
 var _ai_turn_serial := 0
 var _ai_thinking := false
+var theme_language: RefCounted
 
 
 func _ready() -> void:
@@ -104,6 +106,7 @@ func _ready() -> void:
 
 func _apply_theme(theme: Dictionary) -> void:
 	active_theme = theme.duplicate(true)
+	theme_language = THEME_LANGUAGE.new().load_for(str(active_theme.get("id", "wizardry")))
 	if theme_stage != null:
 		theme_stage.apply_theme(active_theme)
 	if ruleset != null:
@@ -584,13 +587,17 @@ func _on_new_game() -> void:
 	ai_difficulty = ["apprentice", "adept", "archmage"][ai_difficulty_select.selected]
 	ai_lexicon = null
 	_save_prefs(ruleset_select.get_item_text(ruleset_select.selected), chosen)
-	var bl_path := "res://data/dictionaries/profanity_blacklist.txt"
-	if FileAccess.file_exists(bl_path):
-		lexicon.blacklist = Lexicon.load_word_set(bl_path)
-	var tl_path := "res://data/dictionaries/two_letter_whitelist.txt"
-	if FileAccess.file_exists(tl_path):
-		lexicon.trusted_two_letter = Lexicon.load_word_set(tl_path)
-	else:
+	for filename in dict_meta:
+		var policy_info: Variant = dict_meta[filename]
+		if not (policy_info is Dictionary):
+			continue
+		var policy_role := str(policy_info.get("policy_role", ""))
+		if policy_role == "":
+			continue
+		var policy_path := "res://data/dictionaries/" + str(filename)
+		if FileAccess.file_exists(policy_path):
+			lexicon.load_policy_set(policy_role, policy_path)
+	if lexicon.trusted_two_letter.is_empty():
 		lexicon.trusted_two_letter = lexicon.words.duplicate()
 	var errs := ruleset.validate()
 	if not errs.is_empty():
@@ -627,7 +634,12 @@ func _on_new_game() -> void:
 		game_root.queue_free()
 		game_root = null
 	await _transition_to_game()
-	_log("Grimoire loaded: %s (%d words). Ruleset: %s." % [lexicon.lexicon_name, lexicon.size(), ruleset.ruleset_name])
+	_log(_flavor("match_start", {
+		"ruleset": ruleset.ruleset_name,
+		"theme": str(active_theme.get("title", "Wizardry")),
+		"lexicon": lexicon.lexicon_name,
+		"word_count": lexicon.size(),
+	}, match_state.sequence, "Grimoire loaded: %s (%d words). Ruleset: %s." % [lexicon.lexicon_name, lexicon.size(), ruleset.ruleset_name]))
 	refresh_all()
 	if players[current].get("is_ai", false):
 		_run_ai_turn()
@@ -824,10 +836,21 @@ func _commit_move(_legacy_validation: Dictionary) -> void:
 		placed_positions.append(Vector2i(int(item.get("x", -1)), int(item.get("y", -1))))
 	selected_rack = -1
 	var score := int(committed.payload.get("score", 0))
-	_log("%s cast '%s' for %d point%s!" % [actor_name, " ".join(word_names), score, "" if score == 1 else "s"])
+	var joined_words := " ".join(word_names)
+	_log(_flavor("move", {
+		"actor": actor_name,
+		"words": joined_words,
+		"score": score,
+		"point_word": "point" if score == 1 else "points",
+	}, committed.sequence, "%s cast '%s' for %d point%s!" % [actor_name, joined_words, score, "" if score == 1 else "s"]))
 	for bh in committed.payload.get("bonus_hits", []):
 		var bws: Array = bh["words"]
-		_log("%s - '%s' resonate%s (+%d)!" % [bh["label"], " ".join(bws), "s" if bws.size() > 1 else "", int(bws.size()) * int(bh["points"])])
+		var bonus_points := int(bws.size()) * int(bh["points"])
+		_log(_flavor("bonus", {
+			"bonus": str(bh["label"]),
+			"words": " ".join(bws),
+			"points": bonus_points,
+		}, committed.sequence, "%s - '%s' (+%d)!" % [bh["label"], " ".join(bws), bonus_points]))
 	var actor: Dictionary = players[int(committed.payload.get("player_index", 0))]
 	_append_move_log(actor, placed_positions, word_names, score)
 	if game_over:
@@ -844,6 +867,9 @@ func _get_ai_lexicon() -> Lexicon:
 		return ai_lexicon
 	ai_lexicon = Lexicon.new()
 	ai_lexicon.blacklist = lexicon.blacklist
+	ai_lexicon.slur_blacklist = lexicon.slur_blacklist
+	ai_lexicon.proper_nouns = lexicon.proper_nouns
+	ai_lexicon.brands_trademarks = lexicon.brands_trademarks
 	ai_lexicon.trusted_two_letter = lexicon.trusted_two_letter
 	var banned := {}
 	for bset in lexicon.bonus_sets:
@@ -875,7 +901,7 @@ func _run_ai_turn() -> void:
 			_ai_thinking = false
 			return
 		var dots := ".".repeat(1 + int(elapsed * 3.0) % 3)
-		thinking_label.text = "%s ponders the arcane%s" % [pl["name"], dots]
+		thinking_label.text = _flavor("thinking", {"actor": str(pl["name"]), "dots": dots}, match_state.sequence, "%s ponders the arcane%s" % [pl["name"], dots])
 		thinking_label.modulate.a = 0.65 + 0.35 * absf(sin(elapsed * 5.0))
 		await get_tree().create_timer(0.25).timeout
 		elapsed += 0.25
@@ -892,7 +918,7 @@ func _run_ai_turn() -> void:
 		var actor_name := str(pl["name"])
 		var pass_events := _apply_local_command(MatchEngine.COMMAND_PASS, {})
 		if _command_rejection(pass_events).is_empty():
-			_log("%s cannot find a spell and passes." % actor_name)
+			_log(_flavor("ai_pass", {"actor": actor_name}, match_state.sequence, "%s cannot find a spell and passes." % actor_name))
 			if game_over:
 				_log_match_result()
 		refresh_all()
@@ -911,7 +937,7 @@ func _run_ai_turn() -> void:
 					rack_index = index
 					break
 			if rack_index < 0:
-				_log("%s fumbled a spell (rune missing) and passes." % pl["name"])
+				_log(_flavor("ai_fumble", {"actor": str(pl["name"]), "reason": "rune missing"}, match_state.sequence, "%s fumbled a spell (rune missing) and passes." % pl["name"]))
 				_apply_local_command(MatchEngine.COMMAND_RECALL_ALL, {})
 				_apply_local_command(MatchEngine.COMMAND_PASS, {})
 				refresh_all()
@@ -924,7 +950,7 @@ func _run_ai_turn() -> void:
 			})
 		_commit_move(res)
 	else:
-		_log("%s fumbled a spell (%s) and passes." % [pl["name"], res["error"]])
+		_log(_flavor("ai_fumble", {"actor": str(pl["name"]), "reason": str(res["error"])}, match_state.sequence, "%s fumbled a spell (%s) and passes." % [pl["name"], res["error"]]))
 		_apply_local_command(MatchEngine.COMMAND_PASS, {})
 		refresh_all()
 		if not game_over and players[current].get("is_ai", false):
@@ -979,7 +1005,11 @@ func _confirm_trade() -> void:
 		return
 	trade_selection.clear()
 	_adopt_match_state()
-	_log("%s trades %d rune%s back to the sigil." % [actor_name, indices.size(), "" if indices.size() == 1 else "s"])
+	_log(_flavor("trade", {
+		"actor": actor_name,
+		"count": indices.size(),
+		"rune_word": "rune" if indices.size() == 1 else "runes",
+	}, match_state.sequence, "%s trades %d rune%s back to the sigil." % [actor_name, indices.size(), "" if indices.size() == 1 else "s"]))
 	refresh_all()
 	if players[current].get("is_ai", false):
 		_run_ai_turn()
@@ -999,7 +1029,7 @@ func _on_pass() -> void:
 		_log("The pass was rejected: %s." % rejection.replace("_", " "))
 		return
 	_adopt_match_state()
-	_log("%s passes. The air crackles..." % actor_name)
+	_log(_flavor("pass", {"actor": actor_name}, match_state.sequence, "%s passes. The air crackles..." % actor_name))
 	if game_over:
 		_log_match_result()
 		refresh_all()
@@ -1030,7 +1060,16 @@ func _log_match_result() -> void:
 	if match_state == null or match_state.result.is_empty():
 		return
 	var winners: Array = match_state.result.get("winners", [])
-	_log("The duel ends! Victor: %s with %d points." % [" & ".join(winners), int(match_state.result.get("score", 0))])
+	var winner_text := " & ".join(winners)
+	var winning_score := int(match_state.result.get("score", 0))
+	_log(_flavor("match_end", {"winner": winner_text, "score": winning_score}, match_state.sequence, "The duel ends! Victor: %s with %d points." % [winner_text, winning_score]))
+
+
+func _flavor(event_type: String, context: Dictionary, sequence: int, fallback: String) -> String:
+	if theme_language == null:
+		return fallback
+	var rendered: String = theme_language.line(event_type, context, sequence)
+	return fallback if rendered.is_empty() else rendered
 
 
 func _back_to_setup() -> void:

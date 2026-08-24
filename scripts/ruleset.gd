@@ -14,6 +14,9 @@ var fog_of_war := false
 var fog_radius := 2
 var skin: Dictionary = {}
 var profanity_filter := false
+var slur_filter := false
+var proper_noun_filter := false
+var brand_trademark_filter := false
 var layout: Array = []
 var legend: Dictionary = {}
 var letters: Dictionary = {}
@@ -53,6 +56,9 @@ static func load_from(path: String) -> WordRuleset:
 	if data.has("skin") and data["skin"] is Dictionary:
 		r.skin = data["skin"]
 	r.profanity_filter = bool(data.get("profanity_filter", false))
+	r.slur_filter = bool(data.get("slur_filter", false))
+	r.proper_noun_filter = bool(data.get("proper_noun_filter", false))
+	r.brand_trademark_filter = bool(data.get("brand_trademark_filter", false))
 	r.layout = data.get("layout", [])
 	r.legend = DEFAULT_LEGEND.duplicate(true)
 	if data.has("legend"):

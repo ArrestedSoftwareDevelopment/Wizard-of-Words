@@ -67,6 +67,12 @@ static func validate(board: GameBoard, pending: Array, ruleset: WordRuleset, lex
 			text += _tile_for(board, pend_map, c)["letter"]
 		if ruleset.profanity_filter and lexicon.blacklist.has(text):
 			return _err("'%s' is forbidden by the censors." % text.to_lower())
+		if ruleset.slur_filter and lexicon.slur_blacklist.has(text):
+			return _err("'%s' is excluded by the table rules." % text.to_lower())
+		if ruleset.proper_noun_filter and lexicon.proper_nouns.has(text):
+			return _err("'%s' is listed as a proper noun." % text.to_lower())
+		if ruleset.brand_trademark_filter and lexicon.brands_trademarks.has(text):
+			return _err("'%s' is listed as a brand or trademark." % text.to_lower())
 		var freebie: bool = cells.size() == 2 and ruleset.allow_any_two_letter
 		if not freebie and cells.size() == 2 and ruleset.strict_two_letter and not lexicon.trusted_two_letter.has(text):
 			return _err("'%s' - two-letter jargon is forbidden here." % text.to_lower())

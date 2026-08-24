@@ -147,6 +147,8 @@ func _build_lexicon_choices(left_column: VBoxContainer) -> void:
 		var info: Dictionary = dict_meta.get(filename, {})
 		if info.is_empty():
 			info = dict_meta.get(filename.get_basename(), {})
+		if not bool(info.get("selectable", true)):
+			continue
 		if info.has("bonus_points"):
 			continue
 		checkbox.button_pressed = bool(info.get("default_checked", true))

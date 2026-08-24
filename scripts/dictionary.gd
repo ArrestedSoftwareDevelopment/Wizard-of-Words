@@ -4,6 +4,9 @@ extends RefCounted
 var lexicon_name := ""
 var words: Dictionary = {}
 var blacklist: Dictionary = {}
+var slur_blacklist: Dictionary = {}
+var proper_nouns: Dictionary = {}
+var brands_trademarks: Dictionary = {}
 var trusted_two_letter: Dictionary = {}
 var bonus_sets: Array = []
 
@@ -70,3 +73,13 @@ func word_list() -> Array:
 
 func size() -> int:
 	return words.size()
+
+
+func load_policy_set(role: String, path: String) -> void:
+	var loaded := load_word_set(path)
+	match role:
+		"profanity": blacklist = loaded
+		"slur": slur_blacklist = loaded
+		"proper_noun": proper_nouns = loaded
+		"brand_trademark": brands_trademarks = loaded
+		"trusted_two_letter": trusted_two_letter = loaded

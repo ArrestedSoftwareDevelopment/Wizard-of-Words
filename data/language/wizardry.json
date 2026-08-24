@@ -1,0 +1,55 @@
+{
+	"move": [
+		"{actor} casts ‘{words}’ for {score} {point_word}.",
+		"With a sweep of the wand, {actor} conjures ‘{words}’—{score} {point_word}.",
+		"{actor} inscribes ‘{words}’ upon the board for {score} {point_word}.",
+		"The runes answer {actor}: ‘{words}’ earns {score} {point_word}.",
+		"{actor} speaks ‘{words}’. The grimoire grants {score} {point_word}.",
+		"A bright sigil forms around ‘{words}’: {score} {point_word} to {actor}.",
+		"{actor} binds the letters into ‘{words}’ and claims {score} {point_word}.",
+		"Quill, rune, and will align—{actor} scores {score} with ‘{words}’."
+	],
+	"bonus": [
+		"{bonus}: ‘{words}’ resonates for +{points}.",
+		"Arcane surge! ‘{words}’ releases +{points}.",
+		"The hidden grammar awakens around ‘{words}’ (+{points}).",
+		"A second spell blooms from ‘{words}’: +{points}.",
+		"The ley lines recognize ‘{words}’ and yield +{points}.",
+		"‘{words}’ was written in the old tongue. +{points}."
+	],
+	"pass": [
+		"{actor} lowers the wand. The air keeps its charge.",
+		"{actor} passes, saving one mystery for later.",
+		"No spell is cast; {actor} studies the turning board.",
+		"{actor} lets the moment pass between two heartbeats.",
+		"The runes remain silent for {actor} this turn.",
+		"{actor} closes the grimoire—but only for a moment."
+	],
+	"trade": [
+		"{actor} returns {count} {rune_word} to the velvet bag.",
+		"{actor} dismisses {count} unruly {rune_word} and draws anew.",
+		"A small transmutation: {actor} exchanges {count} {rune_word}.",
+		"{actor} sends {count} {rune_word} back into the unknown.",
+		"The bag rustles as {actor} trades {count} {rune_word}.",
+		"{actor} petitions fate for {count} different {rune_word}."
+	],
+	"ai_pass": [
+		"{actor} finds no stable incantation and passes.",
+		"Even {actor} cannot coax a spell from these runes.",
+		"{actor} consults three grimoires, sighs, and passes.",
+		"The crystal clouds over. {actor} passes.",
+		"{actor} predicts a better constellation next turn and passes.",
+		"No legal magic presents itself to {actor}."
+	],
+	"ai_fumble": [
+		"{actor} fumbles the working ({reason}) and passes.",
+		"A spark, a cough, no spell: {actor} passes ({reason}).",
+		"{actor} misreads a rune and abandons the casting ({reason}).",
+		"The incantation unravels around {actor} ({reason}).",
+		"{actor} wisely contains a troublesome spell ({reason}).",
+		"A ward rejects {actor}’s attempt ({reason}); the turn passes."
+	],
+	"thinking": ["{actor} consults the grimoire{dots}", "{actor} listens to the runes{dots}", "{actor} traces possible sigils{dots}", "{actor} peers through the crystal{dots}", "{actor} measures the ley lines{dots}", "{actor} ponders the arcane{dots}"],
+	"match_start": ["The grimoire opens. {ruleset} governs this duel.", "The board wakes beneath {theme}. Let the wordcraft begin.", "Runes gather, candles steady, and the duel begins.", "The first page turns: {ruleset}, played upon {theme}."],
+	"match_end": ["The duel ends. {winner} prevails with {score} points.", "The grimoire closes upon {winner}’s victory: {score} points.", "The last rune cools. {winner} claims the board with {score}.", "So it is written: {winner}, victor with {score} points."]
+}

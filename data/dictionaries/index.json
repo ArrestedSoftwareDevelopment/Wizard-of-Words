@@ -1,86 +1,209 @@
 {
 	"enable1.txt": {
 		"title": "ENABLE (172k words)",
-		"description": "Huge, permissive public-domain list. Pros: almost anything reasonable plays. Cons: includes obscure junk; little curation."
+		"description": "Expansive public-domain game list. The broad default: almost anything reasonable plays, including obscure vocabulary.",
+		"category": "base",
+		"default_checked": true,
+		"source_id": "enable2k"
 	},
 	"tournament_american.txt": {
 		"title": "Tournament American (24k words)",
-		"description": "Curated 6of12 list. Pros: clean everyday vocabulary. Cons: misses many inflections; includes some 2-letter jargon unless strict mode is on."
+		"description": "Curated 6of12 list. Clean everyday vocabulary, but fewer inflections than the expansive list.",
+		"category": "base",
+		"default_checked": false,
+		"source_id": "12dicts-6of12"
 	},
 	"extended_american.txt": {
 		"title": "Extended American (75k words)",
-		"description": "2of12inf with inflections. Pros: balanced size and coverage. Cons: middle-ground curation."
+		"description": "2of12inf with inflections. A balanced middle ground between tournament and expansive play.",
+		"category": "base",
+		"default_checked": false,
+		"source_id": "12dicts-2of12inf"
 	},
 	"international_game.txt": {
 		"title": "International Game (61k words)",
-		"description": "Collins-style game word list. Pros: world-tournament feel. Cons: accepts some words American players will contest."
+		"description": "Internationally oriented 12dicts game vocabulary. Accepts some words American players may contest.",
+		"category": "base",
+		"default_checked": false,
+		"source_id": "12dicts-international"
 	},
 	"arcane_lexicon.txt": {
 		"title": "Arcane Lexicon (145 words)",
 		"description": "Bonus word file: fantasy flavor words. Playing them triggers an Arcane Surge (+25 each). Pros: thematic spice when merged. Cons: far too small alone.",
 		"bonus_points": 25,
-		"bonus_flavor": "The ley lines hum"
+		"bonus_flavor": "The ley lines hum",
+		"category": "bonus",
+		"source_id": "project-curated"
 	},
 	"common_english.txt": {
 		"title": "Common English (2.1k words)",
 		"description": "Casual/family mode: small everyday vocabulary, playable entirely on its own for relaxed games. Foundation of the two-letter whitelist. Off by default - enable alongside big grimoires only for flavor.",
-		"default_checked": false
+		"default_checked": false,
+		"category": "base",
+		"source_id": "project-curated"
 	},
 	"acronyms.txt": {
 		"title": "Acronyms & Initialisms",
-		"description": "Opt-in modern abbreviations (NASA, GIF, YOLO). Pros: fun wildcard vocabulary. Cons: purists will object; enable per game mode as desired."
+		"description": "Opt-in abbreviations that can be spoken or spelled as letters (NASA, GIF, HTML, TLDR). Fun, modern, and intentionally nontraditional.",
+		"category": "module",
+		"default_checked": false,
+		"source_id": "project-curated"
 	},
 	"pirate_pillage.txt": {
 		"title": "Pirate Pillage (55 words)",
 		"description": "Bonus file: swashbuckling vocabulary. Playing these words triggers a surge (+25 each). Yo ho.",
 		"default_checked": false,
 		"bonus_points": 25,
-		"bonus_flavor": "The Jolly Roger rises"
+		"bonus_flavor": "The Jolly Roger rises",
+		"category": "bonus",
+		"source_id": "project-curated"
 	},
 	"medieval_might.txt": {
 		"title": "Medieval Might (50 words)",
 		"description": "Bonus file: knights, sieges and heraldry. Playing these words triggers a surge (+25 each).",
 		"default_checked": false,
 		"bonus_points": 25,
-		"bonus_flavor": "Heralds trumpet"
+		"bonus_flavor": "Heralds trumpet",
+		"category": "bonus",
+		"source_id": "project-curated"
 	},
 	"gothic_grimoire.txt": {
 		"title": "Gothic Grimoire (47 words)",
 		"description": "Bonus file: haunted horror vocabulary. Playing these words triggers a surge (+30 each). Best played by candlelight.",
 		"default_checked": false,
 		"bonus_points": 30,
-		"bonus_flavor": "Bells toll in the dark"
+		"bonus_flavor": "Bells toll in the dark",
+		"category": "bonus",
+		"source_id": "project-curated"
 	},
 	"cosmic_canticle.txt": {
 		"title": "Cosmic Canticle (31 words)",
 		"description": "Bonus file: starfaring vocabulary. Rarer words, richer reward (+40 each).",
 		"default_checked": false,
 		"bonus_points": 40,
-		"bonus_flavor": "The void whispers"
+		"bonus_flavor": "The void whispers",
+		"category": "bonus",
+		"source_id": "project-curated"
 	},
 	"kitchen_witchery.txt": {
 		"title": "Kitchen Witchery (31 words)",
 		"description": "Bonus file: hearth-craft and cookery. Gentle surges (+15 each). Cozy mode.",
 		"default_checked": false,
 		"bonus_points": 15,
-		"bonus_flavor": "The cauldron bubbles"
+		"bonus_flavor": "The cauldron bubbles",
+		"category": "bonus",
+		"source_id": "project-curated"
 	},
 	"prairie_homestead.txt": {
 		"title": "Prairie Homestead (60 words)",
 		"description": "Bonus file: frontier homecraft, prairie life and handwork. Playing these words triggers a warm surge (+20 each).",
 		"default_checked": false,
 		"bonus_points": 20,
-		"bonus_flavor": "The prairie wind rises"
+		"bonus_flavor": "The prairie wind rises",
+		"category": "bonus",
+		"source_id": "project-curated"
 	},
 	"velvet_leather.txt": {
 		"title": "Velvet & Leather (58 words)",
 		"description": "Bonus file: consensual-adult kink vocabulary and luxurious materials. Playing these words triggers a velvet surge (+25 each).",
 		"default_checked": false,
 		"bonus_points": 25,
-		"bonus_flavor": "The candlelight deepens"
+		"bonus_flavor": "The candlelight deepens",
+		"category": "bonus",
+		"source_id": "project-curated"
 	},
 	"two_letter_whitelist.txt": {
 		"title": "Two-Letter Whitelist",
-		"description": "Trusted two-letter words used by the 'strict two-letter' ruleset toggle. Not playable on its own."
+		"description": "Trusted two-letter words used by the strict two-letter rule. Not playable on its own.",
+		"selectable": false,
+		"category": "policy",
+		"policy_role": "trusted_two_letter",
+		"source_id": "project-curated"
+	},
+	"profanity_blacklist.txt": {
+		"title": "Profanity Filter",
+		"description": "Project-curated profanity and coarse-language policy list. Hidden from grimoire selection.",
+		"selectable": false,
+		"category": "policy",
+		"policy_role": "profanity",
+		"source_id": "project-curated"
+	},
+	"slur_blacklist.txt": {
+		"title": "Slur Filter",
+		"description": "Small, conservative table-rules exclusion list. Reclaimed and context-sensitive language is deliberately handled cautiously.",
+		"selectable": false,
+		"category": "policy",
+		"policy_role": "slur",
+		"source_id": "project-curated"
+	},
+	"given_names.txt": {
+		"title": "Given Names (SSA sampler)",
+		"description": "Opt-in given names sampled across eras from published U.S. Social Security popularity data. Names are facts; overlaps with ordinary words are expected.",
+		"selectable": true,
+		"category": "module",
+		"default_checked": false,
+		"source_id": "ssa-popular-names"
+	},
+	"proper_nouns_reference.txt": {
+		"title": "Proper Nouns Reference",
+		"description": "Non-exhaustive places, celestial objects, and historical names for optional table-rule enforcement. Not a playable grimoire.",
+		"selectable": false,
+		"category": "policy",
+		"policy_role": "proper_noun",
+		"source_id": "project-curated-facts"
+	},
+	"brands_trademarks.txt": {
+		"title": "Brands & Trademarks Reference",
+		"description": "Non-exhaustive reference list of brand, product, and trademark terms for optional table rules. Inclusion does not assert current registration or ownership.",
+		"selectable": false,
+		"category": "policy",
+		"policy_role": "brand_trademark",
+		"source_id": "project-curated-facts"
+	},
+	"african_american_english.txt": {
+		"title": "African American English (starter)",
+		"description": "A deliberately modest opt-in sampler of documented AAE lexicalized forms. AAE is a diverse, systematic language variety whose grammar cannot be represented by a word list.",
+		"category": "language_module",
+		"default_checked": false,
+		"normalization": "board_ascii",
+		"source_id": "project-curated-ygdp"
+	},
+	"tech_jargon.txt": {
+		"title": "Technology Jargon",
+		"description": "Opt-in computing, networking, and software vocabulary. Useful with smaller base grimoires and gloriously argumentative at a traditional word-game table.",
+		"category": "jargon_module",
+		"default_checked": false,
+		"source_id": "project-curated"
+	},
+	"science_jargon.txt": {
+		"title": "Science Jargon",
+		"description": "Opt-in vocabulary from biology, chemistry, physics, and laboratory practice.",
+		"category": "jargon_module",
+		"default_checked": false,
+		"source_id": "project-curated"
+	},
+	"spanish_starter.txt": {
+		"title": "Spanish (starter)",
+		"description": "Common Spanish words that can be represented with the current A-Z tile set. Words requiring accents or Ñ are mostly deferred until multilingual tiles arrive.",
+		"category": "language_module",
+		"default_checked": false,
+		"normalization": "board_ascii",
+		"source_id": "project-curated"
+	},
+	"french_starter.txt": {
+		"title": "French (starter)",
+		"description": "Common French words compatible with the current A-Z tiles, including conventional OE spellings. Accent-dependent words are deferred.",
+		"category": "language_module",
+		"default_checked": false,
+		"normalization": "board_ascii",
+		"source_id": "project-curated"
+	},
+	"italian_starter.txt": {
+		"title": "Italian (starter)",
+		"description": "Common Italian vocabulary. The present board uses ASCII folding where a spelling normally carries an accent; native tile support is planned.",
+		"category": "language_module",
+		"default_checked": false,
+		"normalization": "ascii_fold",
+		"source_id": "project-curated"
 	}
 }
