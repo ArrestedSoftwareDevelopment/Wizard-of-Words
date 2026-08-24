@@ -169,11 +169,13 @@ func select_theme(theme_id: String) -> void:
 		if str(theme_select.get_item_metadata(index)) == theme_id:
 			theme_select.select(index)
 			update_theme_preview()
+			update_ruleset_preview()
 			return
 
 
 func _on_theme_selected(_index: int) -> void:
 	update_theme_preview()
+	update_ruleset_preview()
 	visual_theme_changed.emit(selected_theme_id())
 
 
@@ -199,6 +201,14 @@ func update_ruleset_preview() -> void:
 	var selected_ruleset := WordRuleset.load_from(path)
 	if selected_ruleset == null:
 		return
+	var theme_id := selected_theme_id()
+	var themed_layout := THEME_CATALOG.board_layout(theme_id)
+	if themed_layout.size() == selected_ruleset.board_size:
+		selected_ruleset.layout = themed_layout
+	ruleset_preview.tooltip_text = "%s — %s" % [
+		str(THEME_CATALOG.find(theme_id).get("title", "Theme")),
+		THEME_CATALOG.board_layout_name(theme_id),
+	]
 	var board_size: int = selected_ruleset.board_size
 	var image := Image.create(board_size, board_size, false, Image.FORMAT_RGBA8)
 	image.fill(Color("241a38"))

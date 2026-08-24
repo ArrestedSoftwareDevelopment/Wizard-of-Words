@@ -551,6 +551,9 @@ func _on_new_game() -> void:
 	if ruleset == null:
 		_log("Failed to load ruleset.")
 		return
+	var themed_layout := THEME_CATALOG.board_layout(str(active_theme.get("id", "")))
+	if themed_layout.size() == ruleset.board_size:
+		ruleset.layout = themed_layout
 	_apply_theme(active_theme)
 	lexicon = Lexicon.new()
 	var names: Array = []
@@ -589,8 +592,8 @@ func _on_new_game() -> void:
 		return
 	if fog_check != null:
 		ruleset.fog_of_war = fog_check.button_pressed
-	# Visual themes are presentation-only. Ruleset mechanics remain independent,
-	# and the full-screen backdrop replaces the legacy ornate board frame.
+	# The selected world owns the balanced premium-square geometry while the
+	# ruleset continues to own rack, bag, scoring, lexicon, and fog mechanics.
 	ruleset.skin["frame"] = ""
 	ruleset.skin["background"] = ""
 

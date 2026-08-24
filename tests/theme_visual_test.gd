@@ -36,6 +36,7 @@ func _run() -> void:
 	for theme in THEME_CATALOG.all():
 		var theme_id := str(theme.get("id", "unknown"))
 		main._apply_theme(theme)
+		main.ruleset.layout = THEME_CATALOG.board_layout(theme_id)
 		main.game_hud.apply_theme(theme)
 		main.game_hud.set_premium_legend(main.ruleset.legend, theme)
 		main._resize_game_board()

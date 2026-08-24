@@ -1,5 +1,7 @@
 extends SceneTree
 
+const THEME_CATALOG := preload("res://scripts/ui/theme_catalog.gd")
+
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -50,9 +52,13 @@ func _run() -> void:
 	main.setup_screen.select_theme("prairie_homestead")
 	if main.setup_screen.theme_bonus_check.disabled:
 		failures.append("Prairie bonus vocabulary should be available")
+	if not main.setup_screen.ruleset_preview.tooltip_text.contains("Prairie Quilt Star"):
+		failures.append("setup board preview does not follow the selected theme")
 	main.setup_screen.select_theme("velvet_leather")
 	if main.setup_screen.theme_bonus_check.disabled:
 		failures.append("Velvet bonus vocabulary should be available")
+	if not main.setup_screen.ruleset_preview.tooltip_text.contains("Laced Hourglass"):
+		failures.append("setup board preview does not name the Velvet layout")
 	main.setup_screen.select_theme("wizardry")
 	if main.setup_screen.theme_bonus_check.disabled:
 		failures.append("Wizardry bonus vocabulary should be available")
@@ -61,6 +67,8 @@ func _run() -> void:
 	main._on_new_game()
 	await process_frame
 	await process_frame
+	if main.ruleset.layout != THEME_CATALOG.board_layout("wizardry"):
+		failures.append("new match did not adopt the selected theme board layout")
 	if not main.game_hud is GameHud or main.rack_box != main.game_hud.rack_box:
 		failures.append("game HUD was not extracted or aliased")
 	if main.game_hud.rack_box.custom_minimum_size.x < 400.0:

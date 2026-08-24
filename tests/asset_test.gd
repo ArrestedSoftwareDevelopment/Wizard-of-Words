@@ -16,11 +16,13 @@ func _initialize() -> void:
 	if themes.size() != 7:
 		failures.append("theme catalog expected 7 themes, found %d" % themes.size())
 	var seen_ids: Dictionary = {}
+	var seen_layouts: Dictionary = {}
 	for theme in themes:
 		var theme_id := str(theme.get("id", ""))
 		if theme_id == "" or seen_ids.has(theme_id):
 			failures.append("theme catalog has missing or duplicate id: %s" % theme_id)
 		seen_ids[theme_id] = true
+		_check_theme_layout(theme_id, seen_layouts, failures)
 		_check_texture(str(theme.get("backdrop", "")), "%s backdrop" % theme_id, failures)
 		_check_texture(str(theme.get("tile", "")), "%s tile" % theme_id, failures)
 		_check_font(str(theme.get("title_font", "")), "%s title font" % theme_id, failures)
@@ -113,6 +115,41 @@ func _check_font(path: String, label: String, failures: Array) -> void:
 	var font := FontFile.new()
 	if font.load_dynamic_font(path) != OK:
 		failures.append("%s is not a loadable font: %s" % [label, path])
+
+
+func _check_theme_layout(theme_id: String, seen_layouts: Dictionary, failures: Array) -> void:
+	var layout := THEME_CATALOG.board_layout(theme_id)
+	if layout.size() != 15:
+		failures.append("%s board layout does not have 15 rows" % theme_id)
+		return
+	var fingerprint := ""
+	var counts := {"d": 0, "t": 0, "D": 0, "T": 0, "*": 0}
+	for y in range(15):
+		var row := str(layout[y])
+		fingerprint += row
+		if row.length() != 15:
+			failures.append("%s board layout row %d is not 15 cells" % [theme_id, y])
+			continue
+		for x in range(15):
+			var marker := row.substr(x, 1)
+			if not ".dtDT*".contains(marker):
+				failures.append("%s board layout contains unknown marker %s" % [theme_id, marker])
+			elif counts.has(marker):
+				counts[marker] += 1
+			var opposite_row := str(layout[14 - y])
+			if opposite_row.length() == 15 and marker != opposite_row.substr(14 - x, 1):
+				failures.append("%s board layout is not rotationally symmetric" % theme_id)
+				return
+	if str(layout[7]).substr(7, 1) != "*":
+		failures.append("%s board layout has no center marker" % theme_id)
+	var expected := {"d": 16, "t": 8, "D": 16, "T": 8, "*": 1}
+	for marker in expected:
+		if int(counts[marker]) != int(expected[marker]):
+			failures.append("%s board layout has %d %s markers; expected %d" % [theme_id, counts[marker], marker, expected[marker]])
+	if seen_layouts.has(fingerprint):
+		failures.append("%s duplicates %s board layout" % [theme_id, seen_layouts[fingerprint]])
+	else:
+		seen_layouts[fingerprint] = theme_id
 
 
 func _check_glyph_atlas(path: String, theme_id: String, failures: Array) -> void:
