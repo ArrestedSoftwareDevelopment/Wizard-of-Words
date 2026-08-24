@@ -100,6 +100,8 @@ Empty board cells render at 70% opacity over a transparent board backing, allowi
 
 Each visual theme owns a unique 15x15 premium-square layout: Concentric Sigil, Cathedral Cross, Compass and Crossbones, Orbital Array, Hearth Lattice, Prairie Quilt Star, and Laced Hourglass. All seven use identical inventories (16 double-letter, 8 triple-letter, 16 double-word, 8 triple-word, and one center) with 180-degree rotational symmetry, so theme choice changes the board's spatial tactics without changing its raw scoring resources. The setup preview follows the selected theme and names its layout in a tooltip.
 
+Blank selection and rune trading use compact modal cards that inherit the active world's panel and accent colors. Both have explicit headings, guidance, cancellation, keyboard-focus states, and bounded sizing; the trade card also provides a live selection count and keeps confirmation disabled until at least one rune is chosen.
+
 All seven themes now have curated bonus lexicons. Prairie Homestead adds 60 frontier, homecraft, and handwork terms (+20); Velvet & Leather adds 58 consensual-adult kink and luxury-material terms (+25). Every entry in both sets is covered by the bundled base dictionaries, and asset tests enforce a nonempty, uppercase, duplicate-free theme lexicon.
 
 Every production theme should provide a backdrop, blank tile face, rack/shelf, palette, and optional premium-cell ornament set. The full-screen backdrop is the primary decorative frame; the playable grid should use only a restrained bevel, rim light, or shadow so the board can scale freely without visual overload. Separate ornate board-frame artwork is optional, not a required theme asset. Source prompts and generation records live in `data/graphics/PROMPTS.md`.

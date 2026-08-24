@@ -108,6 +108,10 @@ func _apply_theme(theme: Dictionary) -> void:
 		theme_stage.apply_theme(active_theme)
 	if ruleset != null:
 		ruleset.skin["tiles"] = str(active_theme.get("tile", ruleset.skin.get("tiles", "")))
+	if blank_popup is BlankPicker:
+		(blank_popup as BlankPicker).apply_theme(active_theme)
+	if trade_dialog != null:
+		trade_dialog.apply_theme(active_theme)
 
 
 func _on_theme_changed(theme_id: String) -> void:
@@ -264,6 +268,7 @@ func _build_blank_picker() -> void:
 	var picker: BlankPicker = BLANK_PICKER_SCENE.instantiate()
 	blank_popup = picker
 	add_child(blank_popup)
+	picker.apply_theme(active_theme)
 	picker.rune_chosen.connect(_on_blank_chosen)
 
 
@@ -949,6 +954,7 @@ func _ensure_trade_popup() -> void:
 	trade_dialog = TRADE_DIALOG_SCENE.instantiate()
 	trade_popup = trade_dialog
 	add_child(trade_popup)
+	trade_dialog.apply_theme(active_theme)
 	trade_box = trade_dialog.trade_box
 	trade_dialog.confirmed.connect(_confirm_trade)
 
