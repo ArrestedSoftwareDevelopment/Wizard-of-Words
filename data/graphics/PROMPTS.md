@@ -172,6 +172,17 @@ All final atlases were produced with Codex built-in image generation at 1536x102
 - `glyphs/generated/kitchen_witchery/Kitchen Witchery Glyph Atlas v1.png` - crossed spoons with rosemary, three-steam green kettle, copper flame rosette, paired herb measures, and three-flame hearth cauldron. Accepted for board validation.
 - `glyphs/generated/prairie_homestead/Prairie Homestead Glyph Atlas v1.png` - knitting needles and indigo yarn, wheat horseshoe, painted barn star, paired wheat sheaves, and stitched flying-geese quilt block. Accepted for board validation.
 - `glyphs/generated/velvet_leather/Velvet and Leather Glyph Atlas v1.png` - linked leather cuffs, three-strand silk knot, garnet starburst, paired roses, and three-ring leather lattice. Accepted for board validation; objects only, non-explicit.
+
+The original atlas files above are retained as design sources. Their baked white/checker mattes and unequal object bounds are not used at runtime. `tools/extract_neutral_matte.gd` now removes only connected neutral matte components—preserving pale enamel, parchment, linen, and enclosed highlights—then decontaminates the cutout edge. `tools/normalize_pictograph_atlas.gd` fits every object to a common 370-pixel maximum extent and centers it in an exact 512x512 cell.
+
+Runtime atlases produced by that deterministic pipeline:
+
+- `glyphs/generated/wizardry/Wizardry Pictograph Atlas v2.png`
+- `glyphs/generated/gothic_horror/Gothic Horror Pictograph Atlas v3.png`
+- `glyphs/generated/pirate/Pirate Pictograph Atlas v3.png`
+- `glyphs/generated/space_age/Space Age Pictograph Atlas v2.png`
+- `glyphs/generated/kitchen_witchery/Kitchen Witchery Pictograph Atlas v2.png`
+- `glyphs/generated/prairie_homestead/Prairie Homestead Pictograph Atlas v2.png`
 - The hand-authored `Velvet and Leather Pictograph Atlas v2.svg` was rejected after live testing: its simplified redraws became crude heavy shapes at board size and did not preserve the quality of the generated design. It has been removed from the runtime assets.
 - `glyphs/generated/velvet_leather/Velvet and Leather Pictograph Atlas v3 source.png` - built-in image generation design source, 1536x1024 opaque PNG. Five refined, simplified oxblood-and-gold pictographs in a strict 3x2 atlas. Its checkerboard was baked into the RGB pixels, so it is retained only as the reproducible source for matte extraction and is not loaded at runtime.
 - `glyphs/generated/velvet_leather/Velvet and Leather Pictograph Atlas v3.png` - the v3 source processed by `tools/extract_neutral_matte.gd`, then optically normalized by `tools/normalize_pictograph_atlas.gd`. Preserves the generated artwork while replacing the pale checker with genuine alpha, decontaminating its antialiased edges, equalizing its five symbol bounds, and centering each symbol in an exact 512x512 cell. This is the runtime Velvet & Leather atlas and bypasses the legacy matte-removal shader.
