@@ -87,7 +87,7 @@
 	{
 		"id": "velvet_leather",
 		"title": "Velvet & Leather",
-		"title_font": "res://data/typefaces/Dumbledor-Thin.ttf",
+		"title_font": "res://data/typefaces/ofl/bodoni_moda/BodoniModa.ttf",
 		"title_color": "#efbd83",
 		"backdrop": "res://data/graphics/backgrounds/generated/velvet_leather/Velvet and Leather Backdrop v1.png",
 		"tile": "res://data/graphics/tiles/generated/velvet_leather/Velvet and Leather Tile v1.png",
