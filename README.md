@@ -49,6 +49,8 @@ Vocabulary is catalog-driven. The game combines one or more base grimoires with 
 
 Each of the seven boards also owns a writing pack under `data/language/`. Move, bonus, pass, trade, AI, opening, and victory lines are selected deterministically from the match event, so remote play will not need to transmit decorative prose. See [the lexicon system](data/dictionaries/README.md) and [the provenance ledger](LICENSES.md).
 
+The implementation sequence for theme effects and private online two-player is specified in [Effects and Online Two-Player Roadmap](docs/EFFECTS_AND_ONLINE_ROADMAP.md).
+
 ## Project guide
 
 - [`DESIGN.md`](DESIGN.md) contains the game vision, implemented milestones, and feature backlog.
