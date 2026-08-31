@@ -66,6 +66,12 @@ Every presentation cue receives a stable identity:
 - Duplicate command acknowledgments do not duplicate commentary, logs, or effects.
 - A headless test can feed recorded events to the presentation bridge without rendering.
 
+### Progress (2026-08-31)
+
+The first effects vertical slice is implemented. `EffectDirector` consumes ordered canonical event batches, assigns `match:sequence:event-index:cue` identities, suppresses duplicate cues, and applies Effects Off/Subtle/Full plus reduced-motion policy before presentation. A mouse-transparent `EffectLayer` provides atmosphere, board, and foreground canvases, with reusable vector-rendered settle, trace, score, pulse, bonus, and victory cues. All seven themes now load their cue palettes and vocabulary from `data/effects/`, and a headless fixture proves profile coverage, retry safety, ordered batch emission, settings behavior, and input transparency.
+
+The remaining E0 work is deliberately explicit: extract `MatchCoordinator` and `LocalMatchTransport`, route commentary/logging through the accepted batch, attach newly revealed fog cells to commit payloads, and prove pre/post checksum diagnostics at that application boundary. The current slice establishes the presentation consumer without pretending the whole coordinator refactor is finished.
+
 ## E1. Add the effect layers
 
 Add one mouse-transparent `EffectLayer` scene with three canvases:

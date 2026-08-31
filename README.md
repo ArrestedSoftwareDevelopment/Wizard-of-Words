@@ -13,6 +13,7 @@ Wizard of Words is an in-development word-crafting duel built with Godot. Player
 - Headless smoke, UI, blank-tile, and trade tests
 - Scene-based title, setup, board, HUD, blank-picker, and trade-dialog UI
 - Seeded authoritative match engine with serializable state, commands, events, and checksums
+- Retry-safe, data-driven theme effects with reduced-motion and effects-off policy
 
 ## Signature mode
 
@@ -41,6 +42,7 @@ godot --headless --path . --script tests/ui_components_test.gd
 godot --headless --path . --script tests/match_engine_test.gd
 godot --headless --path . --script tests/pass_test.gd
 godot --headless --path . --script tests/language_data_test.gd
+godot --headless --path . --script tests/effect_director_test.gd
 ```
 
 ## Words and board language

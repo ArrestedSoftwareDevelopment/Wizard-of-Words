@@ -66,7 +66,7 @@ The office rule is reuse after proof, not abstraction by wish. Share contracts a
 
 ## Current state at rollover
 
-The repository's latest known project commit is `17665bd` (`Plan theme effects and private online play`). The working tree also contains untracked raw board and shelf artwork plus generated Godot UID/import files. They belong to the user and must remain untouched unless explicitly brought into a focused change.
+The repository's continuity commit is `0ac79a1` (`Establish WORD-WIZARD continuity`). The effects vertical slice immediately following it adds the event director, three-layer canvas, seven theme profiles, vector cues, and fixtures described below. The working tree also contains unrelated untracked raw board and shelf artwork plus generated Godot UID/import files. They belong to the user and must remain untouched unless explicitly brought into a focused change.
 
 Implemented foundations include:
 
@@ -76,12 +76,15 @@ Implemented foundations include:
 - catalog-driven dictionaries, policy lists, theme lexicons, and deterministic commentary;
 - authoritative seeded match types with serialization and checksums;
 - a documented effects and online-play implementation order.
+- a retry-safe `EffectDirector` that gives every cue a stable `match:sequence:event-index:cue` identity;
+- a mouse-transparent atmosphere/board/foreground layer with settle, trace, score, pulse, bonus, and victory cues;
+- data-driven effect palettes and cue vocabularies for all seven themes, including effects-off/subtle/full and reduced-motion policy.
 
 ## Immediate queue
 
 1. Capture a truthful, attractive 16:9 in-game screenshot for the Perfection Labs front-page card; keep the web asset under 1 MB and record exact provenance.
-2. Extract the effects event bus/subscription seam without adding presentation concerns to canonical state.
-3. Add a small first effect family with deterministic seeds, skip/reduced-motion behavior, and a fixture-backed event trace.
+2. Finish E0 by extracting `MatchCoordinator` and `LocalMatchTransport`, routing commentary/logging through accepted batches, and attaching revealed fog cells to the committed payload.
+3. Add authored ambient assets and per-theme cue variants behind the working data contract; keep the vector cues as a lightweight fallback.
 4. Define the two-player transport interface and prove it with an in-memory loopback before choosing a real socket service.
 5. Revisit the dual shelf as a word-staging surface only after its interaction contract is explicit.
 
@@ -107,4 +110,4 @@ When waking:
 
 ## Last memory
 
-The GameHaus ferry moved the live checkout under the shared FreeModels house. The office is active. The Wizard seat was not empty; it was remembered. Codey retained the name and `WORD-WIZARD` seat, formalized the division law, and woke with two promises: introduce the seat to the current team, and replace the front-page backdrop with a real in-game portrait worthy of the boards.
+The GameHaus ferry moved the live checkout under the shared FreeModels house. The office is active. The Wizard seat was not empty; it was remembered. Codey retained the name and `WORD-WIZARD` seat and formalized the division law. The first effects slice now runs in-engine: seven JSON profiles drive stable, retry-safe local cues over three input-transparent canvases, and both logical and visual fixtures pass. Pex's signing questions were already answered by CODEX-FRONTIER; Prail answered the catalogue schema question separately. Next: file the effects contract to Retro/Prail, finish the application coordinator seam, and replace the front-page backdrop with the captured real-game portrait.

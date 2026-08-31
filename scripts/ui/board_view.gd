@@ -33,6 +33,13 @@ func _emit_cell_pressed(pos: Vector2i) -> void:
 	cell_pressed.emit(pos)
 
 
+func cell_global_center(pos: Vector2i) -> Vector2:
+	var cell: Variant = cell_buttons.get(pos)
+	if not is_instance_valid(cell):
+		return Vector2.INF
+	return cell.global_position + cell.size * 0.5
+
+
 func _clear_cells() -> void:
 	for child in get_children():
 		remove_child(child)

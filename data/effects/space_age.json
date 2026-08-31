@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "theme_id": "space_age",
+  "cues": {
+    "tile_placed": [
+      {
+        "id": "transport_settle",
+        "visual": "settle",
+        "layer": "board",
+        "color": "#7ee7ff",
+        "duration": 0.32,
+        "opacity": 0.75,
+        "radius": 20,
+        "line_width": 2
+      }
+    ],
+    "move_committed": [
+      {
+        "id": "scanline_trace",
+        "visual": "trace",
+        "layer": "board",
+        "color": "#7ee7ff",
+        "duration": 0.68,
+        "opacity": 0.72,
+        "line_width": 3
+      },
+      {
+        "id": "score_burst",
+        "visual": "score",
+        "layer": "foreground",
+        "color": "#7ee7ff",
+        "duration": 0.82,
+        "opacity": 0.95
+      }
+    ],
+    "theme_bonus": [
+      {
+        "id": "orbit_bloom",
+        "visual": "bonus",
+        "layer": "board",
+        "color": "#b38cff",
+        "duration": 0.72,
+        "opacity": 0.7,
+        "radius": 48,
+        "line_width": 3
+      }
+    ],
+    "turn_passed": [
+      {
+        "id": "atmosphere_sigh",
+        "visual": "pulse",
+        "layer": "board",
+        "color": "#b38cff",
+        "duration": 0.45,
+        "opacity": 0.32,
+        "radius": 54,
+        "line_width": 2
+      }
+    ],
+    "tiles_traded": [
+      {
+        "id": "rack_exchange",
+        "visual": "pulse",
+        "layer": "foreground",
+        "color": "#7ee7ff",
+        "duration": 0.48,
+        "opacity": 0.42,
+        "radius": 42,
+        "line_width": 2
+      }
+    ],
+    "match_ended": [
+      {
+        "id": "warp_ring",
+        "visual": "victory",
+        "layer": "foreground",
+        "color": "#7ee7ff",
+        "duration": 1.25,
+        "opacity": 0.72,
+        "radius": 66,
+        "line_width": 3
+      }
+    ]
+  }
+}

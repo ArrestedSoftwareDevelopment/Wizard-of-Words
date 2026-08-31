@@ -16,6 +16,8 @@ const GAME_HUD_SCENE := preload("res://scenes/components/game_hud.tscn")
 const BLANK_PICKER_SCENE := preload("res://scenes/components/blank_picker.tscn")
 const TRADE_DIALOG_SCENE := preload("res://scenes/components/trade_dialog.tscn")
 const THEME_INTRO_CARD_SCENE := preload("res://scenes/components/theme_intro_card.tscn")
+const EFFECT_LAYER_SCENE := preload("res://scenes/effects/effect_layer.tscn")
+const EFFECT_DIRECTOR_SCRIPT := preload("res://scripts/effects/effect_director.gd")
 const THEME_CATALOG := preload("res://scripts/ui/theme_catalog.gd")
 const THEME_LANGUAGE := preload("res://scripts/language/theme_language.gd")
 const MENU_FADE_SECONDS := 0.45
@@ -89,11 +91,15 @@ var skip_intro_animation := false
 var _ai_turn_serial := 0
 var _ai_thinking := false
 var theme_language: RefCounted
+var effect_director: Node
+var effect_layer: Control
 
 
 func _ready() -> void:
 	get_window().min_size = Vector2i(1024, 720)
 	backdrop_rect = theme_stage
+	effect_director = EFFECT_DIRECTOR_SCRIPT.new()
+	add_child(effect_director)
 	active_theme = THEME_CATALOG.default_theme()
 	_apply_theme(active_theme)
 	_build_blank_picker()
@@ -107,6 +113,8 @@ func _ready() -> void:
 func _apply_theme(theme: Dictionary) -> void:
 	active_theme = theme.duplicate(true)
 	theme_language = THEME_LANGUAGE.new().load_for(str(active_theme.get("id", "wizardry")))
+	if effect_director != null:
+		effect_director.load_theme(str(active_theme.get("id", "wizardry")))
 	if theme_stage != null:
 		theme_stage.apply_theme(active_theme)
 	if ruleset != null:
@@ -183,6 +191,10 @@ func _build_theme_intro_card() -> void:
 
 func _hide_game_and_setup() -> void:
 	_cancel_ai_turn()
+	if is_instance_valid(effect_layer):
+		effect_layer.clear()
+		effect_layer.queue_free()
+		effect_layer = null
 	if game_root != null:
 		game_root.queue_free()
 		game_root = null
@@ -325,6 +337,10 @@ func _build_game_ui() -> void:
 	var right_spacer := Control.new()
 	right_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	game_root.add_child(right_spacer)
+
+	effect_layer = EFFECT_LAYER_SCENE.instantiate()
+	add_child(effect_layer)
+	effect_layer.bind(effect_director, board_view)
 
 
 func _transition_to_game() -> void:
@@ -992,10 +1008,8 @@ func _confirm_trade() -> void:
 		return
 	var indices: Array = trade_selection.keys()
 	indices.sort()
-	_sync_match_state_from_aliases()
 	var actor_name := str(players[current]["name"])
-	var command := MatchCommand.create(MatchEngine.COMMAND_TRADE, {"indices": indices}, current, match_state.sequence, "local-trade-%d" % match_state.sequence)
-	var events := MatchEngine.apply_command(match_state, command, ruleset)
+	var events := _apply_local_command(MatchEngine.COMMAND_TRADE, {"indices": indices})
 	var rejection := _command_rejection(events)
 	if not rejection.is_empty():
 		if rejection == "insufficient_bag_tiles":
@@ -1004,7 +1018,6 @@ func _confirm_trade() -> void:
 			_log("The rune trade was rejected: %s." % rejection.replace("_", " "))
 		return
 	trade_selection.clear()
-	_adopt_match_state()
 	_log(_flavor("trade", {
 		"actor": actor_name,
 		"count": indices.size(),
@@ -1020,15 +1033,12 @@ func _on_pass() -> void:
 		return
 	if not pending.is_empty():
 		_on_recall()
-	_sync_match_state_from_aliases()
 	var actor_name := str(players[current]["name"])
-	var command := MatchCommand.create(MatchEngine.COMMAND_PASS, {}, current, match_state.sequence, "local-pass-%d" % match_state.sequence)
-	var events := MatchEngine.apply_command(match_state, command, ruleset)
+	var events := _apply_local_command(MatchEngine.COMMAND_PASS, {})
 	var rejection := _command_rejection(events)
 	if not rejection.is_empty():
 		_log("The pass was rejected: %s." % rejection.replace("_", " "))
 		return
-	_adopt_match_state()
 	_log(_flavor("pass", {"actor": actor_name}, match_state.sequence, "%s passes. The air crackles..." % actor_name))
 	if game_over:
 		_log_match_result()
@@ -1041,13 +1051,27 @@ func _on_pass() -> void:
 
 func _apply_local_command(command_type: String, payload: Dictionary) -> Array[MatchEvent]:
 	_sync_match_state_from_aliases()
+	var pre_checksum := match_state.checksum()
 	var command_payload := payload.duplicate(true)
 	var key := "local-%s-%d" % [command_type, match_state.sequence]
 	var command := MatchCommand.create(command_type, command_payload, current, match_state.sequence, key)
 	var events := MatchEngine.apply_command(match_state, command, ruleset, lexicon)
 	if _command_rejection(events).is_empty():
 		_adopt_match_state()
+		_present_events(events, command_type, pre_checksum, match_state.checksum())
 	return events
+
+
+func _present_events(events: Array[MatchEvent], command_type: String, pre_checksum: String, post_checksum: String) -> void:
+	if effect_director == null or match_state == null:
+		return
+	var match_id := "local-%d" % match_state.seed
+	effect_director.present(events, {
+		"match_id": match_id,
+		"command_type": command_type,
+		"pre_state_checksum": pre_checksum,
+		"post_state_checksum": post_checksum,
+	})
 
 
 func _command_rejection(events: Array[MatchEvent]) -> String:

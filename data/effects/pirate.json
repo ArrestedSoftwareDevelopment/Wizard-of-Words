@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "theme_id": "pirate",
+  "cues": {
+    "tile_placed": [
+      {
+        "id": "rope_settle",
+        "visual": "settle",
+        "layer": "board",
+        "color": "#f5c66a",
+        "duration": 0.32,
+        "opacity": 0.75,
+        "radius": 20,
+        "line_width": 2
+      }
+    ],
+    "move_committed": [
+      {
+        "id": "compass_trace",
+        "visual": "trace",
+        "layer": "board",
+        "color": "#f5c66a",
+        "duration": 0.68,
+        "opacity": 0.72,
+        "line_width": 3
+      },
+      {
+        "id": "score_burst",
+        "visual": "score",
+        "layer": "foreground",
+        "color": "#f5c66a",
+        "duration": 0.82,
+        "opacity": 0.95
+      }
+    ],
+    "theme_bonus": [
+      {
+        "id": "coin_bloom",
+        "visual": "bonus",
+        "layer": "board",
+        "color": "#79c8c4",
+        "duration": 0.72,
+        "opacity": 0.7,
+        "radius": 48,
+        "line_width": 3
+      }
+    ],
+    "turn_passed": [
+      {
+        "id": "atmosphere_sigh",
+        "visual": "pulse",
+        "layer": "board",
+        "color": "#79c8c4",
+        "duration": 0.45,
+        "opacity": 0.32,
+        "radius": 54,
+        "line_width": 2
+      }
+    ],
+    "tiles_traded": [
+      {
+        "id": "rack_exchange",
+        "visual": "pulse",
+        "layer": "foreground",
+        "color": "#f5c66a",
+        "duration": 0.48,
+        "opacity": 0.42,
+        "radius": 42,
+        "line_width": 2
+      }
+    ],
+    "match_ended": [
+      {
+        "id": "colors_raised",
+        "visual": "victory",
+        "layer": "foreground",
+        "color": "#f5c66a",
+        "duration": 1.25,
+        "opacity": 0.72,
+        "radius": 66,
+        "line_width": 3
+      }
+    ]
+  }
+}

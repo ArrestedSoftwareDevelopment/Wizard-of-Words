@@ -64,6 +64,9 @@ func _run() -> void:
 		failures.append("Wizardry bonus vocabulary should be available")
 	_capture("res://.godot/phase2-setup.png")
 
+	# Keep this fixture valid through the windowed renderer used on machines
+	# where the Mono build cannot initialize headless logging reliably.
+	main.skip_intro_animation = true
 	main._on_new_game()
 	await process_frame
 	await process_frame
